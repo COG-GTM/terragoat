@@ -34,11 +34,8 @@ resource "azurerm_mssql_server_security_alert_policy" "example" {
   state                      = "Enabled"
   storage_endpoint           = azurerm_storage_account.example.primary_blob_endpoint
   storage_account_access_key = azurerm_storage_account.example.primary_access_key
-  disabled_alerts = [
-    "Sql_Injection",
-    "Data_Exfiltration"
-  ]
-  retention_days = 20
+  disabled_alerts            = []
+  retention_days             = 20
 }
 
 resource "azurerm_mysql_server" "example" {
@@ -99,12 +96,26 @@ resource "azurerm_postgresql_configuration" "thrtottling_config" {
   name                = "connection_throttling"
   resource_group_name = azurerm_resource_group.example.name
   server_name         = azurerm_postgresql_server.example.name
-  value               = "off"
+  value               = "on"
 }
 
 resource "azurerm_postgresql_configuration" "example" {
   name                = "log_checkpoints"
   resource_group_name = azurerm_resource_group.example.name
   server_name         = azurerm_postgresql_server.example.name
-  value               = "off"
+  value               = "on"
+}
+
+resource "azurerm_postgresql_configuration" "log_connections" {
+  name                = "log_connections"
+  resource_group_name = azurerm_resource_group.example.name
+  server_name         = azurerm_postgresql_server.example.name
+  value               = "on"
+}
+
+resource "azurerm_postgresql_configuration" "log_disconnections" {
+  name                = "log_disconnections"
+  resource_group_name = azurerm_resource_group.example.name
+  server_name         = azurerm_postgresql_server.example.name
+  value               = "on"
 }
