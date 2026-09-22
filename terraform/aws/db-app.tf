@@ -15,11 +15,12 @@ resource "aws_db_instance" "default" {
   password                = var.password
   apply_immediately       = true
   multi_az                = false
-  backup_retention_period = 0
-  storage_encrypted       = false
+  backup_retention_period = 7
+  storage_encrypted       = true
+  kms_key_id              = aws_kms_key.rds_key.arn
   skip_final_snapshot     = true
   monitoring_interval     = 0
-  publicly_accessible     = true
+  publicly_accessible     = false
 
   tags = merge({
     Name        = "${local.resource_prefix.value}-rds"
