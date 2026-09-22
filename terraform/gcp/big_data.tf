@@ -7,13 +7,17 @@ resource "google_sql_database_instance" "master_instance" {
     tier = "db-f1-micro"
     ip_configuration {
       ipv4_enabled = true
-      authorized_networks {
-        name  = "WWW"
-        value = "0.0.0.0/0"
+      require_ssl  = true
+      dynamic "authorized_networks" {
+        for_each = var.sql_authorized_networks
+        content {
+          name  = authorized_networks.value.name
+          value = authorized_networks.value.cidr
+        }
       }
     }
     backup_configuration {
-      enabled = false
+      enabled = true
     }
   }
 }
