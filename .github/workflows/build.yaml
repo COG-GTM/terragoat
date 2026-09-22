@@ -3,18 +3,20 @@ on:
   push:
     branches:
       - master
+permissions:
+  contents: write
 jobs:
   build:
     runs-on: [self-hosted, public, linux, x64]
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
         name: Checkout repo
         with:
           fetch-depth: 0
       - name: Run yor action
         uses: bridgecrewio/yor-action@main
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v1
+        uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b # v5
         with:
           python-version: 3.7
       - name: Update documentation
