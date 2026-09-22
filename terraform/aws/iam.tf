@@ -18,31 +18,48 @@ resource "aws_iam_user" "user" {
 
 }
 
+data "aws_partition" "current" {}
+
 resource "aws_iam_access_key" "user" {
   user = aws_iam_user.user.name
 }
 
 resource "aws_iam_user_policy" "userpolicy" {
-  name = "excess_policy"
-  user = "${aws_iam_user.user.name}"
+  name = "least_privilege_policy"
+  user = aws_iam_user.user.name
 
-  policy = <<EOF
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Action": [
-        "ec2:*",
-        "s3:*",
-        "lambda:*",
-        "cloudwatch:*"
-      ],
-      "Effect": "Allow",
-      "Resource": "*"
-    }
-  ]
-}
-EOF
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Sid    = "ReadDataBucket"
+        Effect = "Allow"
+        Action = [
+          "s3:GetObject",
+          "s3:GetObjectVersion"
+        ]
+        Resource = "${aws_s3_bucket.data.arn}/*"
+      },
+      {
+        Sid    = "ListDataBucket"
+        Effect = "Allow"
+        Action = [
+          "s3:ListBucket",
+          "s3:GetBucketLocation"
+        ]
+        Resource = aws_s3_bucket.data.arn
+      },
+      {
+        Sid    = "ReadOwnFunctionLogs"
+        Effect = "Allow"
+        Action = [
+          "logs:GetLogEvents",
+          "logs:DescribeLogStreams"
+        ]
+        Resource = "arn:${data.aws_partition.current.partition}:logs:${var.region}:${data.aws_caller_identity.current.account_id}:log-group:/aws/lambda/${local.resource_prefix.value}-*:*"
+      }
+    ]
+  })
 }
 
 output "username" {
@@ -50,6 +67,7 @@ output "username" {
 }
 
 output "secret" {
-  value = aws_iam_access_key.user.encrypted_secret
+  value     = aws_iam_access_key.user.encrypted_secret
+  sensitive = true
 }
 
