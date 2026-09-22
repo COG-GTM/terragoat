@@ -22,3 +22,17 @@ variable "location" {
   default = "us-central1c"
   type    = string
 }
+
+variable "master_authorized_cidr_blocks" {
+  description = "Trusted CIDR ranges allowed to reach the GKE control plane"
+  type = list(object({
+    cidr_block   = string
+    display_name = string
+  }))
+  default = [
+    {
+      cidr_block   = "10.0.0.0/24"
+      display_name = "public-subnetwork"
+    }
+  ]
+}
