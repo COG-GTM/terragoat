@@ -42,6 +42,12 @@ variable "password" {
   default     = "Aa1234321Bb"
 }
 
+variable "ssh_ingress_cidr_blocks" {
+  type        = "list"
+  description = "CIDR blocks allowed to reach SSH (port 22) on the web node security group"
+  default     = ["172.16.0.0/16"]
+}
+
 variable "neptune-dbname" {
   type        = "string"
   description = "Name of the Neptune graph database"
