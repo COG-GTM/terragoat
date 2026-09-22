@@ -22,3 +22,15 @@ variable "location" {
   default = "us-central1c"
   type    = string
 }
+
+variable "firewall_source_ranges" {
+  description = "Trusted CIDR ranges allowed to reach tagged instances. Defaults to the Google IAP TCP forwarding range."
+  type        = list(string)
+  default     = ["35.235.240.0/20"]
+}
+
+variable "firewall_allowed_tcp_ports" {
+  description = "TCP ports opened to firewall_source_ranges on tagged instances"
+  type        = list(string)
+  default     = ["22"]
+}
