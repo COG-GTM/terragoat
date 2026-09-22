@@ -22,3 +22,9 @@ variable "location" {
   default = "us-central1c"
   type    = string
 }
+
+variable "bigquery_reader_group_emails" {
+  type        = list(string)
+  default     = []
+  description = "Google group emails granted READER access to the BigQuery dataset"
+}
