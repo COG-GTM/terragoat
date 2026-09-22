@@ -19,9 +19,19 @@ resource "google_compute_subnetwork" "public-subnetwork" {
 resource "google_compute_firewall" "allow_all" {
   name          = "terragoat-${var.environment}-firewall"
   network       = google_compute_network.vpc.id
-  source_ranges = ["0.0.0.0/0"]
+  source_ranges = var.allowed_ingress_cidrs
   allow {
     protocol = "tcp"
     ports    = ["0-65535"]
+  }
+}
+
+resource "google_compute_firewall" "allow_iap_ssh" {
+  name          = "terragoat-${var.environment}-firewall-iap-ssh"
+  network       = google_compute_network.vpc.id
+  source_ranges = ["35.235.240.0/20"]
+  allow {
+    protocol = "tcp"
+    ports    = ["22"]
   }
 }

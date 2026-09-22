@@ -18,6 +18,12 @@ variable "environment" {
   description = "The environment name"
 }
 
+variable "allowed_ingress_cidrs" {
+  type        = list(string)
+  description = "CIDR ranges allowed to reach instances in the VPC"
+  default     = ["10.0.0.0/24"]
+}
+
 variable "location" {
   default = "us-central1c"
   type    = string
