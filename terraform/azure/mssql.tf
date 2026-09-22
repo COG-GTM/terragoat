@@ -156,12 +156,10 @@ resource "azurerm_mssql_server_security_alert_policy" "alertpolicy1" {
   state                      = "Enabled"
   storage_endpoint           = azurerm_storage_account.security_storage_account.primary_blob_endpoint
   storage_account_access_key = azurerm_storage_account.security_storage_account.primary_access_key
-  disabled_alerts = [
-    "Sql_Injection",
-    "Data_Exfiltration"
-  ]
-  retention_days  = 20
-  email_addresses = ["securityengineer@bridgecrew.io"]
+  disabled_alerts            = []
+  retention_days             = 20
+  email_account_admins       = true
+  email_addresses            = var.security_alert_email_addresses
 }
 
 resource "azurerm_mssql_server_security_alert_policy" "alertpolicy2" {
@@ -170,12 +168,10 @@ resource "azurerm_mssql_server_security_alert_policy" "alertpolicy2" {
   state                      = "Enabled"
   storage_endpoint           = azurerm_storage_account.security_storage_account.primary_blob_endpoint
   storage_account_access_key = azurerm_storage_account.security_storage_account.primary_access_key
-  disabled_alerts = [
-    "Sql_Injection",
-    "Data_Exfiltration"
-  ]
-  retention_days  = 20
-  email_addresses = ["securityengineer@bridgecrew.io"]
+  disabled_alerts            = []
+  retention_days             = 20
+  email_account_admins       = true
+  email_addresses            = var.security_alert_email_addresses
 }
 
 resource "azurerm_mssql_server_security_alert_policy" "alertpolicy3" {
@@ -184,12 +180,10 @@ resource "azurerm_mssql_server_security_alert_policy" "alertpolicy3" {
   state                      = "Enabled"
   storage_endpoint           = azurerm_storage_account.security_storage_account.primary_blob_endpoint
   storage_account_access_key = azurerm_storage_account.security_storage_account.primary_access_key
-  disabled_alerts = [
-    "Sql_Injection",
-    "Data_Exfiltration"
-  ]
-  retention_days  = 20
-  email_addresses = ["securityengineer@bridgecrew.io"]
+  disabled_alerts            = []
+  retention_days             = 20
+  email_account_admins       = true
+  email_addresses            = var.security_alert_email_addresses
 }
 
 resource "azurerm_mssql_server_security_alert_policy" "alertpolicy4" {
@@ -198,12 +192,10 @@ resource "azurerm_mssql_server_security_alert_policy" "alertpolicy4" {
   state                      = "Enabled"
   storage_endpoint           = azurerm_storage_account.security_storage_account.primary_blob_endpoint
   storage_account_access_key = azurerm_storage_account.security_storage_account.primary_access_key
-  disabled_alerts = [
-    "Sql_Injection",
-    "Data_Exfiltration"
-  ]
-  retention_days  = 20
-  email_addresses = ["securityengineer@bridgecrew.io"]
+  disabled_alerts            = []
+  retention_days             = 20
+  email_account_admins       = true
+  email_addresses            = var.security_alert_email_addresses
 }
 
 resource "azurerm_mssql_server_security_alert_policy" "alertpolicy5" {
@@ -212,11 +204,10 @@ resource "azurerm_mssql_server_security_alert_policy" "alertpolicy5" {
   state                      = "Enabled"
   storage_endpoint           = azurerm_storage_account.security_storage_account.primary_blob_endpoint
   storage_account_access_key = azurerm_storage_account.security_storage_account.primary_access_key
-  disabled_alerts = [
-    "Sql_Injection",
-    "Data_Exfiltration"
-  ]
-  retention_days = 20
+  disabled_alerts            = []
+  retention_days             = 20
+  email_account_admins       = true
+  email_addresses            = var.security_alert_email_addresses
 }
 
 resource "azurerm_mssql_server_security_alert_policy" "alertpolicy6" {
@@ -225,12 +216,10 @@ resource "azurerm_mssql_server_security_alert_policy" "alertpolicy6" {
   state                      = "Enabled"
   storage_endpoint           = azurerm_storage_account.security_storage_account.primary_blob_endpoint
   storage_account_access_key = azurerm_storage_account.security_storage_account.primary_access_key
-  disabled_alerts = [
-    "Sql_Injection",
-    "Data_Exfiltration"
-  ]
-  retention_days  = 20
-  email_addresses = ["securityengineer@bridgecrew.io"]
+  disabled_alerts            = []
+  retention_days             = 20
+  email_account_admins       = true
+  email_addresses            = var.security_alert_email_addresses
 }
 
 resource "azurerm_mssql_server_security_alert_policy" "alertpolicy7" {
@@ -239,10 +228,39 @@ resource "azurerm_mssql_server_security_alert_policy" "alertpolicy7" {
   state                      = "Enabled"
   storage_endpoint           = azurerm_storage_account.security_storage_account.primary_blob_endpoint
   storage_account_access_key = azurerm_storage_account.security_storage_account.primary_access_key
-  disabled_alerts = [
-    "Sql_Injection",
-    "Data_Exfiltration"
+  disabled_alerts            = []
+  retention_days             = 20
+  email_account_admins       = true
+  email_addresses            = var.security_alert_email_addresses
+}
+
+resource "azurerm_storage_container" "sql_vulnerability_assessment" {
+  name                  = "sql-vulnerability-assessment"
+  storage_account_name  = azurerm_storage_account.security_storage_account.name
+  container_access_type = "private"
+}
+
+locals {
+  mssql_alert_policy_ids = [
+    azurerm_mssql_server_security_alert_policy.alertpolicy1.id,
+    azurerm_mssql_server_security_alert_policy.alertpolicy2.id,
+    azurerm_mssql_server_security_alert_policy.alertpolicy3.id,
+    azurerm_mssql_server_security_alert_policy.alertpolicy4.id,
+    azurerm_mssql_server_security_alert_policy.alertpolicy5.id,
+    azurerm_mssql_server_security_alert_policy.alertpolicy6.id,
+    azurerm_mssql_server_security_alert_policy.alertpolicy7.id,
   ]
-  retention_days  = 20
-  email_addresses = ["securityengineer@bridgecrew.io"]
+}
+
+resource "azurerm_mssql_server_vulnerability_assessment" "va" {
+  count                           = length(local.mssql_alert_policy_ids)
+  server_security_alert_policy_id = local.mssql_alert_policy_ids[count.index]
+  storage_container_path          = "${azurerm_storage_account.security_storage_account.primary_blob_endpoint}${azurerm_storage_container.sql_vulnerability_assessment.name}/"
+  storage_account_access_key      = azurerm_storage_account.security_storage_account.primary_access_key
+
+  recurring_scans {
+    enabled                   = true
+    email_subscription_admins = true
+    emails                    = var.security_alert_email_addresses
+  }
 }
