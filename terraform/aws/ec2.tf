@@ -6,6 +6,10 @@ resource "aws_instance" "web_host" {
   vpc_security_group_ids = [
   "${aws_security_group.web-node.id}"]
   subnet_id = "${aws_subnet.web_subnet.id}"
+  root_block_device {
+    encrypted = true
+  }
+
   user_data = <<EOF
 #! /bin/bash
 sudo apt-get update
@@ -32,10 +36,9 @@ EOF
 }
 
 resource "aws_ebs_volume" "web_host_storage" {
-  # unencrypted volume
   availability_zone = "${var.region}a"
-  #encrypted         = false  # Setting this causes the volume to be recreated on apply 
-  size = 1
+  encrypted         = true
+  size              = 1
   tags = merge({
     Name = "${local.resource_prefix.value}-ebs"
     }, {
