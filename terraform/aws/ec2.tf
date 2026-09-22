@@ -75,7 +75,6 @@ resource "aws_volume_attachment" "ebs_att" {
 }
 
 resource "aws_security_group" "web-node" {
-  # security group is open to the world in SSH port
   name        = "${local.resource_prefix.value}-sg"
   description = "${local.resource_prefix.value} Security Group"
   vpc_id      = aws_vpc.web_vpc.id
@@ -88,11 +87,11 @@ resource "aws_security_group" "web-node" {
     "0.0.0.0/0"]
   }
   ingress {
-    from_port = 22
-    to_port   = 22
-    protocol  = "tcp"
-    cidr_blocks = [
-    "0.0.0.0/0"]
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    description = "SSH from trusted networks only"
+    cidr_blocks = var.ssh_ingress_cidr_blocks
   }
   egress {
     from_port = 0
