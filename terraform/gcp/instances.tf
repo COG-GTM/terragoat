@@ -15,6 +15,7 @@ resource "google_compute_instance" "server" {
     access_config {}
   }
   can_ip_forward = true
+  tags           = ["terragoat-${var.environment}-ssh"]
 
   metadata = {
     block-project-ssh-keys = false
