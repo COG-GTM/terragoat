@@ -5,9 +5,6 @@ resource "azurerm_managed_disk" "example" {
   storage_account_type = "Standard_LRS"
   create_option        = "Empty"
   disk_size_gb         = 1
-  encryption_settings {
-    enabled = false
-  }
   tags = {
     git_commit           = "d68d2897add9bc2203a5ed0632a5cdd8ff8cefb0"
     git_file             = "terraform/azure/storage.tf"
@@ -26,6 +23,7 @@ resource "azurerm_storage_account" "example" {
   location                 = azurerm_resource_group.example.location
   account_tier             = "Standard"
   account_replication_type = "GRS"
+  min_tls_version          = "TLS1_2"
   queue_properties {
     logging {
       delete                = false
