@@ -207,22 +207,41 @@ resource "aws_iam_role_policy" "ec2policy" {
   name = "${local.resource_prefix.value}-policy"
   role = aws_iam_role.ec2role.id
 
-  policy = <<EOF
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Action": [
-        "s3:*",
-        "ec2:*",
-        "rds:*"
-      ],
-      "Effect": "Allow",
-      "Resource": "*"
-    }
-  ]
-}
-EOF
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Sid    = "ReadAppBucket"
+        Effect = "Allow"
+        Action = [
+          "s3:GetObject",
+          "s3:ListBucket"
+        ]
+        Resource = [
+          aws_s3_bucket.data.arn,
+          "${aws_s3_bucket.data.arn}/*"
+        ]
+      },
+      {
+        Sid    = "DescribeAppDatabase"
+        Effect = "Allow"
+        Action = [
+          "rds:DescribeDBInstances"
+        ]
+        Resource = aws_db_instance.default.arn
+      },
+      {
+        # EC2 describe actions do not support resource-level permissions.
+        Sid    = "DescribeInstanceMetadata"
+        Effect = "Allow"
+        Action = [
+          "ec2:DescribeInstances",
+          "ec2:DescribeTags"
+        ]
+        Resource = "*"
+      }
+    ]
+  })
 }
 
 data "aws_ami" "amazon-linux-2" {
