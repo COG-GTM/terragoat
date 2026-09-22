@@ -77,10 +77,10 @@ resource azurerm_network_security_group "bad_sg" {
     name                       = "AllowSSH"
     priority                   = 200
     protocol                   = "TCP"
-    source_address_prefix      = "*"
+    source_address_prefixes    = var.management_source_address_prefixes
     source_port_range          = "*"
     destination_port_range     = "22-22"
-    destination_address_prefix = "*"
+    destination_address_prefix = "VirtualNetwork"
   }
 
   security_rule {
@@ -89,10 +89,10 @@ resource azurerm_network_security_group "bad_sg" {
     name                       = "AllowRDP"
     priority                   = 300
     protocol                   = "TCP"
-    source_address_prefix      = "*"
+    source_address_prefixes    = var.management_source_address_prefixes
     source_port_range          = "*"
     destination_port_range     = "3389-3389"
-    destination_address_prefix = "*"
+    destination_address_prefix = "VirtualNetwork"
   }
   tags = {
     git_commit           = "5c6b5d60a8aa63a5d37e60f15185d13a967f0542"
@@ -123,14 +123,14 @@ resource azurerm_network_watcher "network_watcher" {
 }
 
 resource azurerm_network_watcher_flow_log "flow_log" {
-  enabled                   = false
+  enabled                   = true
   network_security_group_id = azurerm_network_security_group.bad_sg.id
   network_watcher_name      = azurerm_network_watcher.network_watcher.name
   resource_group_name       = azurerm_resource_group.example.name
   storage_account_id        = azurerm_storage_account.example.id
   retention_policy {
-    enabled = false
-    days    = 10
+    enabled = true
+    days    = 90
   }
   tags = {
     git_commit           = "898d5beaec7ffdef6df0d7abecff407362e2a74e"
