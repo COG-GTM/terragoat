@@ -22,8 +22,8 @@ resource "azurerm_mssql_server" "mssql1" {
   resource_group_name          = azurerm_resource_group.example.name
   location                     = azurerm_resource_group.example.location
   version                      = "12.0"
-  administrator_login          = "missadministrator"
-  administrator_login_password = "AdminPassword123!"
+  administrator_login          = var.mssql_administrator_login
+  administrator_login_password = random_password.mssql_admin["mssql1"].result
   tags = {
     git_commit           = "c6f8caa51942284d02465518822685897ad90141"
     git_file             = "terraform/azure/mssql.tf"
@@ -41,8 +41,8 @@ resource "azurerm_mssql_server" "mssql2" {
   resource_group_name          = azurerm_resource_group.example.name
   location                     = azurerm_resource_group.example.location
   version                      = "12.0"
-  administrator_login          = "missadministrator"
-  administrator_login_password = "AdminPassword123!"
+  administrator_login          = var.mssql_administrator_login
+  administrator_login_password = random_password.mssql_admin["mssql2"].result
   tags = {
     git_commit           = "c6f8caa51942284d02465518822685897ad90141"
     git_file             = "terraform/azure/mssql.tf"
@@ -60,8 +60,8 @@ resource "azurerm_mssql_server" "mssql3" {
   resource_group_name          = azurerm_resource_group.example.name
   location                     = azurerm_resource_group.example.location
   version                      = "12.0"
-  administrator_login          = "missadministrator"
-  administrator_login_password = "AdminPassword123!"
+  administrator_login          = var.mssql_administrator_login
+  administrator_login_password = random_password.mssql_admin["mssql3"].result
   tags = {
     git_commit           = "c6f8caa51942284d02465518822685897ad90141"
     git_file             = "terraform/azure/mssql.tf"
@@ -79,8 +79,8 @@ resource "azurerm_mssql_server" "mssql4" {
   resource_group_name          = azurerm_resource_group.example.name
   location                     = azurerm_resource_group.example.location
   version                      = "12.0"
-  administrator_login          = "missadministrator"
-  administrator_login_password = "AdminPassword123!"
+  administrator_login          = var.mssql_administrator_login
+  administrator_login_password = random_password.mssql_admin["mssql4"].result
   tags = {
     git_commit           = "c6f8caa51942284d02465518822685897ad90141"
     git_file             = "terraform/azure/mssql.tf"
@@ -98,8 +98,8 @@ resource "azurerm_mssql_server" "mssql5" {
   resource_group_name          = azurerm_resource_group.example.name
   location                     = azurerm_resource_group.example.location
   version                      = "12.0"
-  administrator_login          = "missadministrator"
-  administrator_login_password = "AdminPassword123!"
+  administrator_login          = var.mssql_administrator_login
+  administrator_login_password = random_password.mssql_admin["mssql5"].result
   tags = {
     git_commit           = "c6f8caa51942284d02465518822685897ad90141"
     git_file             = "terraform/azure/mssql.tf"
@@ -117,8 +117,8 @@ resource "azurerm_mssql_server" "mssql6" {
   resource_group_name          = azurerm_resource_group.example.name
   location                     = azurerm_resource_group.example.location
   version                      = "12.0"
-  administrator_login          = "missadministrator"
-  administrator_login_password = "AdminPassword123!"
+  administrator_login          = var.mssql_administrator_login
+  administrator_login_password = random_password.mssql_admin["mssql6"].result
   tags = {
     git_commit           = "c6f8caa51942284d02465518822685897ad90141"
     git_file             = "terraform/azure/mssql.tf"
@@ -136,8 +136,8 @@ resource "azurerm_mssql_server" "mssql7" {
   resource_group_name          = azurerm_resource_group.example.name
   location                     = azurerm_resource_group.example.location
   version                      = "12.0"
-  administrator_login          = "missadministrator"
-  administrator_login_password = "AdminPassword123!"
+  administrator_login          = var.mssql_administrator_login
+  administrator_login_password = random_password.mssql_admin["mssql7"].result
   tags = {
     git_commit           = "c6f8caa51942284d02465518822685897ad90141"
     git_file             = "terraform/azure/mssql.tf"

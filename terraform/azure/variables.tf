@@ -13,3 +13,9 @@ variable "environment" {
   default     = "dev"
   description = "Must be all lowercase letters or numbers"
 }
+
+variable "mssql_administrator_login" {
+  type        = string
+  default     = "missadministrator"
+  description = "Administrator login for the Azure SQL servers"
+}
