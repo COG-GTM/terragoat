@@ -27,14 +27,33 @@ resource "aws_elasticsearch_domain" "monitoring-framework" {
   }
 }
 
+variable "es_allowed_principal_arns" {
+  type        = list(string)
+  description = "IAM principal ARNs allowed to access the Elasticsearch domain. Defaults to the current account root."
+  default     = []
+}
+
+locals {
+  es_principal_arns = length(var.es_allowed_principal_arns) > 0 ? var.es_allowed_principal_arns : ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:root"]
+}
+
 data aws_iam_policy_document "policy" {
   statement {
-    actions = ["es:*"]
+    actions = [
+      "es:ESHttpGet",
+      "es:ESHttpHead",
+      "es:ESHttpPost",
+      "es:ESHttpPut",
+      "es:ESHttpDelete",
+    ]
     principals {
       type        = "AWS"
-      identifiers = ["*"]
+      identifiers = local.es_principal_arns
     }
-    resources = ["*"]
+    resources = [
+      aws_elasticsearch_domain.monitoring-framework.arn,
+      "${aws_elasticsearch_domain.monitoring-framework.arn}/*",
+    ]
   }
 }
 
