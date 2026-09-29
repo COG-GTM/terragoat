@@ -12,6 +12,16 @@ data aws_iam_policy_document "iam_policy_eks" {
       type        = "Service"
       identifiers = ["eks.amazonaws.com"]
     }
+    condition {
+      test     = "StringEquals"
+      variable = "aws:SourceAccount"
+      values   = [data.aws_caller_identity.current.account_id]
+    }
+    condition {
+      test     = "ArnLike"
+      variable = "aws:SourceArn"
+      values   = ["arn:aws:eks:${var.region}:${data.aws_caller_identity.current.account_id}:cluster/${local.eks_name.value}"]
+    }
   }
 }
 
