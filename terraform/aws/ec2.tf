@@ -2,6 +2,7 @@ resource "aws_instance" "web_host" {
   # ec2 have plain text secrets in user data
   ami           = "${var.ami}"
   instance_type = "t2.nano"
+  monitoring    = true
 
   vpc_security_group_ids = [
   "${aws_security_group.web-node.id}"]
@@ -270,7 +271,38 @@ resource "aws_flow_log" "vpcflowlogs" {
 
 resource "aws_s3_bucket" "flowbucket" {
   bucket        = "${local.resource_prefix.value}-flowlogs"
+  acl           = "private"
   force_destroy = true
+  versioning {
+    enabled = true
+  }
+  server_side_encryption_configuration {
+    rule {
+      apply_server_side_encryption_by_default {
+        sse_algorithm     = "aws:kms"
+        kms_master_key_id = aws_kms_key.logs_key.arn
+      }
+    }
+  }
+  logging {
+    target_bucket = aws_s3_bucket.access_logs.id
+    target_prefix = "flowlogs/"
+  }
+  lifecycle_rule {
+    id      = "log-retention"
+    enabled = true
+    transition {
+      days          = 90
+      storage_class = "GLACIER"
+    }
+    expiration {
+      days = var.log_retention_days
+    }
+    noncurrent_version_expiration {
+      days = 90
+    }
+    abort_incomplete_multipart_upload_days = 7
+  }
 
   tags = merge({
     Name        = "${local.resource_prefix.value}-flowlogs"
@@ -285,6 +317,14 @@ resource "aws_s3_bucket" "flowbucket" {
     git_repo             = "terragoat"
     yor_trace            = "f058838a-b1e0-4383-b965-7e06e987ffb1"
   })
+}
+
+resource "aws_s3_bucket_public_access_block" "flowbucket" {
+  bucket                  = aws_s3_bucket.flowbucket.id
+  block_public_acls       = true
+  block_public_policy     = true
+  ignore_public_acls      = true
+  restrict_public_buckets = true
 }
 
 output "ec2_public_dns" {

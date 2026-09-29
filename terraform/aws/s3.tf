@@ -1,10 +1,13 @@
 resource "aws_s3_bucket" "data" {
   # bucket is public
   # bucket is not encrypted
-  # bucket does not have access logs
   # bucket does not have versioning
   bucket        = "${local.resource_prefix.value}-data"
   force_destroy = true
+  logging {
+    target_bucket = aws_s3_bucket.access_logs.id
+    target_prefix = "data/"
+  }
   tags = merge({
     Name        = "${local.resource_prefix.value}-data"
     Environment = local.resource_prefix.value
@@ -41,11 +44,14 @@ resource "aws_s3_bucket_object" "data_object" {
 
 resource "aws_s3_bucket" "financials" {
   # bucket is not encrypted
-  # bucket does not have access logs
   # bucket does not have versioning
   bucket        = "${local.resource_prefix.value}-financials"
   acl           = "private"
   force_destroy = true
+  logging {
+    target_bucket = aws_s3_bucket.access_logs.id
+    target_prefix = "financials/"
+  }
   tags = merge({
     Name        = "${local.resource_prefix.value}-financials"
     Environment = local.resource_prefix.value
@@ -64,11 +70,14 @@ resource "aws_s3_bucket" "financials" {
 
 resource "aws_s3_bucket" "operations" {
   # bucket is not encrypted
-  # bucket does not have access logs
   bucket = "${local.resource_prefix.value}-operations"
   acl    = "private"
   versioning {
     enabled = true
+  }
+  logging {
+    target_bucket = aws_s3_bucket.access_logs.id
+    target_prefix = "operations/"
   }
   force_destroy = true
   tags = merge({
@@ -94,8 +103,8 @@ resource "aws_s3_bucket" "data_science" {
     enabled = true
   }
   logging {
-    target_bucket = "${aws_s3_bucket.logs.id}"
-    target_prefix = "log/"
+    target_bucket = aws_s3_bucket.access_logs.id
+    target_prefix = "data-science/"
   }
   force_destroy = true
   tags = {
@@ -112,9 +121,28 @@ resource "aws_s3_bucket" "data_science" {
 
 resource "aws_s3_bucket" "logs" {
   bucket = "${local.resource_prefix.value}-logs"
-  acl    = "log-delivery-write"
+  acl    = "private"
   versioning {
     enabled = true
+  }
+  logging {
+    target_bucket = aws_s3_bucket.access_logs.id
+    target_prefix = "logs/"
+  }
+  lifecycle_rule {
+    id      = "log-retention"
+    enabled = true
+    transition {
+      days          = 90
+      storage_class = "GLACIER"
+    }
+    expiration {
+      days = var.log_retention_days
+    }
+    noncurrent_version_expiration {
+      days = 90
+    }
+    abort_incomplete_multipart_upload_days = 7
   }
   server_side_encryption_configuration {
     rule {
@@ -138,4 +166,161 @@ resource "aws_s3_bucket" "logs" {
     git_repo             = "terragoat"
     yor_trace            = "01946fe9-aae2-4c99-a975-e9b0d3a4696c"
   })
+}
+
+resource "aws_s3_bucket_public_access_block" "logs" {
+  bucket                  = aws_s3_bucket.logs.id
+  block_public_acls       = true
+  block_public_policy     = true
+  ignore_public_acls      = true
+  restrict_public_buckets = true
+}
+
+data "aws_iam_policy_document" "logs_bucket_policy" {
+  statement {
+    sid       = "AWSCloudTrailAclCheck"
+    actions   = ["s3:GetBucketAcl"]
+    resources = [aws_s3_bucket.logs.arn]
+    principals {
+      type        = "Service"
+      identifiers = ["cloudtrail.amazonaws.com"]
+    }
+  }
+
+  statement {
+    sid       = "AWSCloudTrailWrite"
+    actions   = ["s3:PutObject"]
+    resources = ["${aws_s3_bucket.logs.arn}/cloudtrail/AWSLogs/${data.aws_caller_identity.current.account_id}/*"]
+    principals {
+      type        = "Service"
+      identifiers = ["cloudtrail.amazonaws.com"]
+    }
+    condition {
+      test     = "StringEquals"
+      variable = "s3:x-amz-acl"
+      values   = ["bucket-owner-full-control"]
+    }
+  }
+
+  statement {
+    sid       = "DenyInsecureTransport"
+    effect    = "Deny"
+    actions   = ["s3:*"]
+    resources = [aws_s3_bucket.logs.arn, "${aws_s3_bucket.logs.arn}/*"]
+    principals {
+      type        = "*"
+      identifiers = ["*"]
+    }
+    condition {
+      test     = "Bool"
+      variable = "aws:SecureTransport"
+      values   = ["false"]
+    }
+  }
+}
+
+resource "aws_s3_bucket_policy" "logs" {
+  bucket     = aws_s3_bucket.logs.id
+  policy     = data.aws_iam_policy_document.logs_bucket_policy.json
+  depends_on = [aws_s3_bucket_public_access_block.logs]
+}
+
+# Target for S3 server access logs and ELB access logs. Both services only
+# support SSE-S3 on the destination bucket, so a KMS CMK cannot be used here.
+resource "aws_s3_bucket" "access_logs" {
+  #checkov:skip=CKV_AWS_145:S3 server access logging and ELB access logging only support SSE-S3 destinations
+  #checkov:skip=CKV_AWS_18:This is the access log destination; logging it to itself would recurse
+  #checkov:skip=CKV_AWS_144:Cross-region replication is out of scope for this demo environment
+  #checkov:skip=CKV2_AWS_62:Event notifications are not required for the access log archive
+  bucket        = "${local.resource_prefix.value}-access-logs"
+  acl           = "private"
+  force_destroy = true
+  versioning {
+    enabled = true
+  }
+  server_side_encryption_configuration {
+    rule {
+      apply_server_side_encryption_by_default {
+        sse_algorithm = "AES256"
+      }
+    }
+  }
+  lifecycle_rule {
+    id      = "log-retention"
+    enabled = true
+    transition {
+      days          = 90
+      storage_class = "GLACIER"
+    }
+    expiration {
+      days = var.log_retention_days
+    }
+    noncurrent_version_expiration {
+      days = 90
+    }
+    abort_incomplete_multipart_upload_days = 7
+  }
+  tags = {
+    Name        = "${local.resource_prefix.value}-access-logs"
+    Environment = local.resource_prefix.value
+  }
+}
+
+resource "aws_s3_bucket_public_access_block" "access_logs" {
+  bucket                  = aws_s3_bucket.access_logs.id
+  block_public_acls       = true
+  block_public_policy     = true
+  ignore_public_acls      = true
+  restrict_public_buckets = true
+}
+
+data "aws_elb_service_account" "current" {}
+
+data "aws_iam_policy_document" "access_logs_bucket_policy" {
+  statement {
+    sid       = "S3ServerAccessLogsPolicy"
+    actions   = ["s3:PutObject"]
+    resources = ["${aws_s3_bucket.access_logs.arn}/*"]
+    principals {
+      type        = "Service"
+      identifiers = ["logging.s3.amazonaws.com"]
+    }
+    condition {
+      test     = "StringEquals"
+      variable = "aws:SourceAccount"
+      values   = [data.aws_caller_identity.current.account_id]
+    }
+  }
+
+  statement {
+    sid       = "ELBAccessLogsPolicy"
+    actions   = ["s3:PutObject"]
+    resources = ["${aws_s3_bucket.access_logs.arn}/elb/AWSLogs/${data.aws_caller_identity.current.account_id}/*"]
+    principals {
+      type        = "AWS"
+      identifiers = [data.aws_elb_service_account.current.arn]
+    }
+  }
+
+  statement {
+    sid       = "DenyInsecureTransport"
+    effect    = "Deny"
+    actions   = ["s3:*"]
+    resources = [aws_s3_bucket.access_logs.arn, "${aws_s3_bucket.access_logs.arn}/*"]
+    principals {
+      type        = "*"
+      identifiers = ["*"]
+    }
+    condition {
+      test     = "Bool"
+      variable = "aws:SecureTransport"
+      values   = ["false"]
+    }
+  }
+}
+
+resource "aws_s3_bucket_policy" "access_logs" {
+  bucket     = aws_s3_bucket.access_logs.id
+  policy     = data.aws_iam_policy_document.access_logs_bucket_policy.json
+  depends_on = [aws_s3_bucket_public_access_block.access_logs]
 }

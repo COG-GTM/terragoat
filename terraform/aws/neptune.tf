@@ -7,6 +7,8 @@ resource "aws_neptune_cluster" "default" {
   iam_database_authentication_enabled = false
   apply_immediately                   = true
   storage_encrypted                   = false
+  enable_cloudwatch_logs_exports      = ["audit"]
+  depends_on                          = [aws_cloudwatch_log_group.neptune_audit]
   tags = {
     git_commit           = "aa8fd16fd94cccf6af206e2f0922b5558f8ac514"
     git_file             = "terraform/aws/neptune.tf"
@@ -17,6 +19,12 @@ resource "aws_neptune_cluster" "default" {
     git_repo             = "terragoat"
     yor_trace            = "0d4cbb85-73ed-4ca0-b1da-296e4185f34e"
   }
+}
+
+resource "aws_cloudwatch_log_group" "neptune_audit" {
+  name              = "/aws/neptune/cluster/${var.neptune-dbname}/audit"
+  retention_in_days = var.log_retention_days
+  kms_key_id        = aws_kms_key.logs_key.arn
 }
 
 resource "aws_neptune_cluster_instance" "default" {

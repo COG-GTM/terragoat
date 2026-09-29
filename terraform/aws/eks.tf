@@ -115,6 +115,22 @@ resource aws_subnet "eks_subnet2" {
   })
 }
 
+resource aws_cloudwatch_log_group "eks_cluster" {
+  name              = "/aws/eks/${local.eks_name.value}/cluster"
+  retention_in_days = var.log_retention_days
+  kms_key_id        = aws_kms_key.logs_key.arn
+}
+
+resource aws_flow_log "eks_vpc_flowlogs" {
+  log_destination      = aws_s3_bucket.flowbucket.arn
+  log_destination_type = "s3"
+  traffic_type         = "ALL"
+  vpc_id               = aws_vpc.eks_vpc.id
+  tags = {
+    Name = "${local.resource_prefix.value}-eks-flowlogs"
+  }
+}
+
 resource aws_eks_cluster "eks_cluster" {
   name     = local.eks_name.value
   role_arn = "${aws_iam_role.iam_for_eks.arn}"
@@ -124,9 +140,12 @@ resource aws_eks_cluster "eks_cluster" {
     subnet_ids              = ["${aws_subnet.eks_subnet1.id}", "${aws_subnet.eks_subnet2.id}"]
   }
 
+  enabled_cluster_log_types = ["api", "audit", "authenticator", "controllerManager", "scheduler"]
+
   depends_on = [
     "aws_iam_role_policy_attachment.policy_attachment-AmazonEKSClusterPolicy",
     "aws_iam_role_policy_attachment.policy_attachment-AmazonEKSServicePolicy",
+    aws_cloudwatch_log_group.eks_cluster,
   ]
   tags = {
     git_commit           = "d68d2897add9bc2203a5ed0632a5cdd8ff8cefb0"

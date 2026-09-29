@@ -47,3 +47,9 @@ variable "neptune-dbname" {
   description = "Name of the Neptune graph database"
   default     = "neptunedb1"
 }
+
+variable "log_retention_days" {
+  type        = number
+  description = "Retention for CloudWatch log groups and S3 log archives (CIS/PCI require at least 365 days)"
+  default     = 365
+}

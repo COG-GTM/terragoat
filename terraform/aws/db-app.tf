@@ -21,6 +21,9 @@ resource "aws_db_instance" "default" {
   monitoring_interval     = 0
   publicly_accessible     = true
 
+  enabled_cloudwatch_logs_exports = ["error", "slowquery"]
+  depends_on                      = [aws_cloudwatch_log_group.rds_default]
+
   tags = merge({
     Name        = "${local.resource_prefix.value}-rds"
     Environment = local.resource_prefix.value
@@ -39,6 +42,13 @@ resource "aws_db_instance" "default" {
   lifecycle {
     ignore_changes = ["password"]
   }
+}
+
+resource "aws_cloudwatch_log_group" "rds_default" {
+  for_each          = toset(["error", "slowquery"])
+  name              = "/aws/rds/instance/rds-${local.resource_prefix.value}/${each.value}"
+  retention_in_days = var.log_retention_days
+  kms_key_id        = aws_kms_key.logs_key.arn
 }
 
 resource "aws_db_option_group" "default" {
@@ -76,6 +86,18 @@ resource "aws_db_parameter_group" "default" {
   parameter {
     name         = "character_set_server"
     value        = "utf8"
+    apply_method = "immediate"
+  }
+
+  parameter {
+    name         = "slow_query_log"
+    value        = "1"
+    apply_method = "immediate"
+  }
+
+  parameter {
+    name         = "log_output"
+    value        = "FILE"
     apply_method = "immediate"
   }
 
@@ -245,6 +267,7 @@ resource "aws_instance" "db_app" {
   ami                  = data.aws_ami.amazon-linux-2.id
   instance_type        = "t2.nano"
   iam_instance_profile = aws_iam_instance_profile.ec2profile.name
+  monitoring           = true
 
   vpc_security_group_ids = [
   "${aws_security_group.web-node.id}"]

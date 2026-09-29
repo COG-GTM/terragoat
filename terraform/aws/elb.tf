@@ -25,6 +25,15 @@ resource "aws_elb" "weblb" {
   connection_draining         = true
   connection_draining_timeout = 400
 
+  access_logs {
+    bucket        = aws_s3_bucket.access_logs.id
+    bucket_prefix = "elb"
+    interval      = 60
+    enabled       = true
+  }
+
+  depends_on = [aws_s3_bucket_policy.access_logs]
+
   tags = merge({
     Name = "foobar-terraform-elb"
     }, {

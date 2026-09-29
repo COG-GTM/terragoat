@@ -40,12 +40,22 @@ resource "aws_lambda_function" "analysis_lambda" {
 
   runtime = "nodejs12.x"
 
+  tracing_config {
+    mode = "Active"
+  }
+
   environment {
     variables = {
       access_key = "AKIAIOSFODNN7EXAMPLE"
       secret_key = "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"
     }
   }
+
+  depends_on = [
+    aws_cloudwatch_log_group.analysis_lambda,
+    aws_iam_role_policy.lambda_logging,
+    aws_iam_role_policy_attachment.lambda_xray,
+  ]
   tags = {
     git_commit           = "5c6b5d60a8aa63a5d37e60f15185d13a967f0542"
     git_file             = "terraform/aws/lambda.tf"
@@ -56,4 +66,28 @@ resource "aws_lambda_function" "analysis_lambda" {
     git_repo             = "terragoat"
     yor_trace            = "f7d8bc47-e5d9-4b09-9d8f-e7b9724d826e"
   }
+}
+
+resource "aws_cloudwatch_log_group" "analysis_lambda" {
+  name              = "/aws/lambda/${local.resource_prefix.value}-analysis"
+  retention_in_days = var.log_retention_days
+  kms_key_id        = aws_kms_key.logs_key.arn
+}
+
+data "aws_iam_policy_document" "lambda_logging" {
+  statement {
+    actions   = ["logs:CreateLogStream", "logs:PutLogEvents"]
+    resources = ["${aws_cloudwatch_log_group.analysis_lambda.arn}:*"]
+  }
+}
+
+resource "aws_iam_role_policy" "lambda_logging" {
+  name   = "${local.resource_prefix.value}-analysis-lambda-logging"
+  role   = aws_iam_role.iam_for_lambda.id
+  policy = data.aws_iam_policy_document.lambda_logging.json
+}
+
+resource "aws_iam_role_policy_attachment" "lambda_xray" {
+  role       = aws_iam_role.iam_for_lambda.name
+  policy_arn = "arn:aws:iam::aws:policy/AWSXRayDaemonWriteAccess"
 }
