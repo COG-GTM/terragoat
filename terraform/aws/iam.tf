@@ -22,27 +22,69 @@ resource "aws_iam_access_key" "user" {
   user = aws_iam_user.user.name
 }
 
-resource "aws_iam_user_policy" "userpolicy" {
-  name = "excess_policy"
-  user = "${aws_iam_user.user.name}"
+data "aws_iam_policy_document" "userpolicy" {
+  # Start, stop and reboot the db-app EC2 instance only.
+  statement {
+    sid    = "ManageDbAppInstance"
+    effect = "Allow"
+    actions = [
+      "ec2:StartInstances",
+      "ec2:StopInstances",
+      "ec2:RebootInstances",
+    ]
+    resources = [aws_instance.db_app.arn]
+  }
 
-  policy = <<EOF
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Action": [
-        "ec2:*",
-        "s3:*",
-        "lambda:*",
-        "cloudwatch:*"
-      ],
-      "Effect": "Allow",
-      "Resource": "*"
-    }
-  ]
+  # List the data bucket.
+  statement {
+    sid       = "ListDataBucket"
+    effect    = "Allow"
+    actions   = ["s3:ListBucket"]
+    resources = [aws_s3_bucket.data.arn]
+  }
+
+  # Read and write objects in the data bucket (no delete, ACL or policy changes).
+  statement {
+    sid    = "ReadWriteDataBucketObjects"
+    effect = "Allow"
+    actions = [
+      "s3:GetObject",
+      "s3:PutObject",
+    ]
+    resources = ["${aws_s3_bucket.data.arn}/*"]
+  }
+
+  # Read configuration of and invoke the analysis Lambda function (no code or permission changes).
+  statement {
+    sid    = "InvokeAnalysisLambda"
+    effect = "Allow"
+    actions = [
+      "lambda:GetFunction",
+      "lambda:GetFunctionConfiguration",
+      "lambda:InvokeFunction",
+    ]
+    resources = [aws_lambda_function.analysis_lambda.arn]
+  }
+
+  # Read the analysis Lambda function's CloudWatch Logs.
+  statement {
+    sid    = "ReadAnalysisLambdaLogs"
+    effect = "Allow"
+    actions = [
+      "logs:DescribeLogStreams",
+      "logs:GetLogEvents",
+      "logs:FilterLogEvents",
+    ]
+    resources = [
+      "arn:aws:logs:${var.region}:${data.aws_caller_identity.current.account_id}:log-group:/aws/lambda/${aws_lambda_function.analysis_lambda.function_name}:*",
+    ]
+  }
 }
-EOF
+
+resource "aws_iam_user_policy" "userpolicy" {
+  name   = "${local.resource_prefix.value}-user-policy"
+  user   = aws_iam_user.user.name
+  policy = data.aws_iam_policy_document.userpolicy.json
 }
 
 output "username" {
