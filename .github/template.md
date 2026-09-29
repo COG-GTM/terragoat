@@ -23,6 +23,7 @@ TerraGoat is a learning and training project that demonstrates how common config
   * [AWS](#aws-setup)
   * [Azure](#azure-setup)
   * [GCP](#gcp-setup)
+* [Checkov CI and baseline](#checkov-ci-and-baseline)
 * [Contributing](#contributing)
 * [Support](#support)
 
@@ -237,6 +238,31 @@ terraform destroy
 * [TerraGoat](https://github.com/bridgecrewio/terragoat) - Vulnerable by design Terraform stack
 * [CDKGoat](https://github.com/bridgecrewio/cdkgoat) - Vulnerable by design CDK application
 * [kustomizegoat](https://github.com/bridgecrewio/kustomizegoat) - Vulnerable by design kustomize deployment
+## Checkov CI and baseline
+
+TerraGoat is vulnerable by design, so a plain Checkov scan always fails. The [`checkov`](.github/workflows/checkov.yaml) workflow runs on every pull request and on pushes to `master`, and compares the scan against the committed baseline file [`terraform/.checkov.baseline`](terraform/.checkov.baseline). Findings recorded in the baseline (the intentional vulnerabilities) are ignored; any finding **not** in the baseline fails the build.
+
+The baseline is a JSON list of `file` → `resource` → `check_ids` produced by Checkov itself. A finding is matched by file path, resource address and check ID, so renaming a resource or moving it to another file makes its existing findings show up as new.
+
+Run the same check locally (use the version pinned as `CHECKOV_VERSION` in the workflow):
+
+```bash
+pip install "checkov==3.3.19"
+checkov -d terraform --baseline terraform/.checkov.baseline --compact --quiet
+```
+
+### Updating the baseline
+
+Update the baseline only when you intentionally add, rename or move a vulnerable resource, or when you bump the pinned Checkov version (new releases add checks):
+
+```bash
+# from the repository root, with the pinned checkov version installed
+checkov -d terraform --create-baseline --compact --quiet > /dev/null
+git diff terraform/.checkov.baseline   # review: every added check ID should be intentional
+```
+
+`--create-baseline` rewrites `terraform/.checkov.baseline` with every current finding (Checkov exits non-zero because findings exist; that is expected). Commit the updated file in the same pull request as the change that required it, and mention in the description why the new findings are intentional. If you bump Checkov, update `CHECKOV_VERSION` in `.github/workflows/checkov.yaml` in the same commit.
+
 ## Contributing
 
 Contribution is welcomed!
