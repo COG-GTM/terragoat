@@ -75,29 +75,33 @@ resource "aws_volume_attachment" "ebs_att" {
 }
 
 resource "aws_security_group" "web-node" {
-  # security group is open to the world in SSH port
   name        = "${local.resource_prefix.value}-sg"
   description = "${local.resource_prefix.value} Security Group"
   vpc_id      = aws_vpc.web_vpc.id
 
   ingress {
-    from_port = 80
-    to_port   = 80
-    protocol  = "tcp"
+    description = "Public HTTP to the web tier"
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
     cidr_blocks = [
     "0.0.0.0/0"]
   }
-  ingress {
-    from_port = 22
-    to_port   = 22
-    protocol  = "tcp"
-    cidr_blocks = [
-    "0.0.0.0/0"]
+  dynamic "ingress" {
+    for_each = length(var.ssh_ingress_cidr_blocks) > 0 ? [var.ssh_ingress_cidr_blocks] : []
+    content {
+      description = "SSH from trusted admin networks"
+      from_port   = 22
+      to_port     = 22
+      protocol    = "tcp"
+      cidr_blocks = ingress.value
+    }
   }
   egress {
-    from_port = 0
-    to_port   = 0
-    protocol  = "-1"
+    description = "Outbound traffic"
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
     cidr_blocks = [
     "0.0.0.0/0"]
   }
@@ -130,6 +134,10 @@ resource "aws_vpc" "web_vpc" {
     git_repo             = "terragoat"
     yor_trace            = "9bf2359b-952e-4570-9595-52eba4c20473"
   })
+}
+
+resource "aws_default_security_group" "web_vpc_default" {
+  vpc_id = aws_vpc.web_vpc.id
 }
 
 resource "aws_subnet" "web_subnet" {
@@ -285,6 +293,15 @@ resource "aws_s3_bucket" "flowbucket" {
     git_repo             = "terragoat"
     yor_trace            = "f058838a-b1e0-4383-b965-7e06e987ffb1"
   })
+}
+
+resource "aws_s3_bucket_public_access_block" "flowbucket" {
+  bucket = aws_s3_bucket.flowbucket.id
+
+  block_public_acls       = true
+  block_public_policy     = true
+  ignore_public_acls      = true
+  restrict_public_buckets = true
 }
 
 output "ec2_public_dns" {
