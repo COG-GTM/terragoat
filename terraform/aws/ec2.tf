@@ -5,7 +5,7 @@ resource "aws_instance" "web_host" {
 
   vpc_security_group_ids = [
   "${aws_security_group.web-node.id}"]
-  subnet_id = "${aws_subnet.web_subnet.id}"
+  subnet_id = "${aws_subnet.web_private_subnet.id}"
   user_data = <<EOF
 #! /bin/bash
 sudo apt-get update
@@ -75,32 +75,10 @@ resource "aws_volume_attachment" "ebs_att" {
 }
 
 resource "aws_security_group" "web-node" {
-  # security group is open to the world in SSH port
   name        = "${local.resource_prefix.value}-sg"
-  description = "${local.resource_prefix.value} Security Group"
+  description = "${local.resource_prefix.value} web tier instances"
   vpc_id      = aws_vpc.web_vpc.id
 
-  ingress {
-    from_port = 80
-    to_port   = 80
-    protocol  = "tcp"
-    cidr_blocks = [
-    "0.0.0.0/0"]
-  }
-  ingress {
-    from_port = 22
-    to_port   = 22
-    protocol  = "tcp"
-    cidr_blocks = [
-    "0.0.0.0/0"]
-  }
-  egress {
-    from_port = 0
-    to_port   = 0
-    protocol  = "-1"
-    cidr_blocks = [
-    "0.0.0.0/0"]
-  }
   depends_on = [aws_vpc.web_vpc]
   tags = {
     git_commit           = "d68d2897add9bc2203a5ed0632a5cdd8ff8cefb0"
@@ -112,6 +90,86 @@ resource "aws_security_group" "web-node" {
     git_repo             = "terragoat"
     yor_trace            = "b7af1b40-64eb-4519-a1a0-ab198db4b193"
   }
+}
+
+resource "aws_security_group_rule" "web_node_ingress_from_elb" {
+  type                     = "ingress"
+  description              = "App traffic from the web ELB"
+  from_port                = 8000
+  to_port                  = 8000
+  protocol                 = "tcp"
+  source_security_group_id = aws_security_group.weblb.id
+  security_group_id        = aws_security_group.web-node.id
+}
+
+resource "aws_security_group_rule" "web_node_ingress_ssh" {
+  type              = "ingress"
+  description       = "SSH from within the VPC (bastion/VPN)"
+  from_port         = 22
+  to_port           = 22
+  protocol          = "tcp"
+  cidr_blocks       = [aws_vpc.web_vpc.cidr_block]
+  security_group_id = aws_security_group.web-node.id
+}
+
+resource "aws_security_group_rule" "web_node_egress_https" {
+  type              = "egress"
+  description       = "HTTPS egress via NAT for package repos and AWS APIs"
+  from_port         = 443
+  to_port           = 443
+  protocol          = "tcp"
+  cidr_blocks       = ["0.0.0.0/0"]
+  security_group_id = aws_security_group.web-node.id
+}
+
+resource "aws_security_group_rule" "web_node_egress_http" {
+  type              = "egress"
+  description       = "HTTP egress via NAT for package repos"
+  from_port         = 80
+  to_port           = 80
+  protocol          = "tcp"
+  cidr_blocks       = ["0.0.0.0/0"]
+  security_group_id = aws_security_group.web-node.id
+}
+
+resource "aws_security_group_rule" "web_node_egress_mysql" {
+  type                     = "egress"
+  description              = "MySQL to the RDS instance"
+  from_port                = 3306
+  to_port                  = 3306
+  protocol                 = "tcp"
+  source_security_group_id = aws_security_group.default.id
+  security_group_id        = aws_security_group.web-node.id
+}
+
+resource "aws_security_group" "weblb" {
+  name        = "${local.resource_prefix.value}-elb-sg"
+  description = "${local.resource_prefix.value} web ELB"
+  vpc_id      = aws_vpc.web_vpc.id
+
+  tags = {
+    Name = "${local.resource_prefix.value}-elb-sg"
+  }
+}
+
+resource "aws_security_group_rule" "weblb_ingress_http" {
+  type              = "ingress"
+  description       = "HTTP from trusted networks"
+  from_port         = 80
+  to_port           = 80
+  protocol          = "tcp"
+  cidr_blocks       = var.trusted_cidr_blocks
+  security_group_id = aws_security_group.weblb.id
+}
+
+resource "aws_security_group_rule" "weblb_egress_to_web_node" {
+  type                     = "egress"
+  description              = "Forward to web tier instances"
+  from_port                = 8000
+  to_port                  = 8000
+  protocol                 = "tcp"
+  source_security_group_id = aws_security_group.web-node.id
+  security_group_id        = aws_security_group.weblb.id
 }
 
 resource "aws_vpc" "web_vpc" {
@@ -132,11 +190,19 @@ resource "aws_vpc" "web_vpc" {
   })
 }
 
+resource "aws_default_security_group" "web_vpc_default" {
+  vpc_id = aws_vpc.web_vpc.id
+
+  tags = {
+    Name = "${local.resource_prefix.value}-default-sg"
+  }
+}
+
 resource "aws_subnet" "web_subnet" {
   vpc_id                  = aws_vpc.web_vpc.id
   cidr_block              = "172.16.10.0/24"
   availability_zone       = "${var.region}a"
-  map_public_ip_on_launch = true
+  map_public_ip_on_launch = false
 
   tags = merge({
     Name = "${local.resource_prefix.value}-subnet"
@@ -156,7 +222,7 @@ resource "aws_subnet" "web_subnet2" {
   vpc_id                  = aws_vpc.web_vpc.id
   cidr_block              = "172.16.11.0/24"
   availability_zone       = "${var.region}b"
-  map_public_ip_on_launch = true
+  map_public_ip_on_launch = false
 
   tags = merge({
     Name = "${local.resource_prefix.value}-subnet2"
@@ -172,6 +238,27 @@ resource "aws_subnet" "web_subnet2" {
   })
 }
 
+resource "aws_subnet" "web_private_subnet" {
+  vpc_id                  = aws_vpc.web_vpc.id
+  cidr_block              = "172.16.20.0/24"
+  availability_zone       = "${var.region}a"
+  map_public_ip_on_launch = false
+
+  tags = {
+    Name = "${local.resource_prefix.value}-private-subnet"
+  }
+}
+
+resource "aws_subnet" "web_private_subnet2" {
+  vpc_id                  = aws_vpc.web_vpc.id
+  cidr_block              = "172.16.21.0/24"
+  availability_zone       = "${var.region}b"
+  map_public_ip_on_launch = false
+
+  tags = {
+    Name = "${local.resource_prefix.value}-private-subnet2"
+  }
+}
 
 resource "aws_internet_gateway" "web_igw" {
   vpc_id = aws_vpc.web_vpc.id
@@ -225,6 +312,49 @@ resource "aws_route" "public_internet_gateway" {
   timeouts {
     create = "5m"
   }
+}
+
+resource "aws_eip" "web_nat" {
+  domain = "vpc"
+
+  tags = {
+    Name = "${local.resource_prefix.value}-nat-eip"
+  }
+}
+
+resource "aws_nat_gateway" "web_nat" {
+  allocation_id = aws_eip.web_nat.id
+  subnet_id     = aws_subnet.web_subnet.id
+
+  tags = {
+    Name = "${local.resource_prefix.value}-nat"
+  }
+
+  depends_on = [aws_internet_gateway.web_igw]
+}
+
+resource "aws_route_table" "web_private_rtb" {
+  vpc_id = aws_vpc.web_vpc.id
+
+  tags = {
+    Name = "${local.resource_prefix.value}-private-rtb"
+  }
+}
+
+resource "aws_route" "private_nat_gateway" {
+  route_table_id         = aws_route_table.web_private_rtb.id
+  destination_cidr_block = "0.0.0.0/0"
+  nat_gateway_id         = aws_nat_gateway.web_nat.id
+}
+
+resource "aws_route_table_association" "private_rtbassoc" {
+  subnet_id      = aws_subnet.web_private_subnet.id
+  route_table_id = aws_route_table.web_private_rtb.id
+}
+
+resource "aws_route_table_association" "private_rtbassoc2" {
+  subnet_id      = aws_subnet.web_private_subnet2.id
+  route_table_id = aws_route_table.web_private_rtb.id
 }
 
 
@@ -287,9 +417,14 @@ resource "aws_s3_bucket" "flowbucket" {
   })
 }
 
-output "ec2_public_dns" {
-  description = "Web Host Public DNS name"
-  value       = aws_instance.web_host.public_dns
+output "ec2_private_dns" {
+  description = "Web Host private DNS name"
+  value       = aws_instance.web_host.private_dns
+}
+
+output "weblb_dns_name" {
+  description = "Web ELB DNS name"
+  value       = aws_elb.weblb.dns_name
 }
 
 output "vpc_id" {
@@ -305,4 +440,14 @@ output "public_subnet" {
 output "public_subnet2" {
   description = "The ID of the Public subnet"
   value       = aws_subnet.web_subnet2.id
+}
+
+output "private_subnet" {
+  description = "The ID of the private subnet"
+  value       = aws_subnet.web_private_subnet.id
+}
+
+output "private_subnet2" {
+  description = "The ID of the private subnet"
+  value       = aws_subnet.web_private_subnet2.id
 }

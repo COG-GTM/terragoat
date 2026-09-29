@@ -59,11 +59,30 @@ resource aws_vpc "eks_vpc" {
   })
 }
 
+resource "aws_default_security_group" "eks_vpc_default" {
+  vpc_id = aws_vpc.eks_vpc.id
+
+  tags = {
+    Name = "${local.resource_prefix.value}-eks-default-sg"
+  }
+}
+
+resource "aws_flow_log" "eks_vpcflowlogs" {
+  log_destination      = aws_s3_bucket.flowbucket.arn
+  log_destination_type = "s3"
+  traffic_type         = "ALL"
+  vpc_id               = aws_vpc.eks_vpc.id
+
+  tags = {
+    Name = "${local.resource_prefix.value}-eks-flowlogs"
+  }
+}
+
 resource aws_subnet "eks_subnet1" {
   vpc_id                  = aws_vpc.eks_vpc.id
   cidr_block              = "10.10.10.0/24"
   availability_zone       = "${var.region}a"
-  map_public_ip_on_launch = true
+  map_public_ip_on_launch = false
   tags = merge({
     Name                                            = "${local.resource_prefix.value}-eks-subnet"
     "kubernetes.io/cluster/${local.eks_name.value}" = "shared"
@@ -91,7 +110,7 @@ resource aws_subnet "eks_subnet2" {
   vpc_id                  = aws_vpc.eks_vpc.id
   cidr_block              = "10.10.11.0/24"
   availability_zone       = "${var.region}b"
-  map_public_ip_on_launch = true
+  map_public_ip_on_launch = false
   tags = merge({
     Name                                            = "${local.resource_prefix.value}-eks-subnet2"
     "kubernetes.io/cluster/${local.eks_name.value}" = "shared"
@@ -121,6 +140,7 @@ resource aws_eks_cluster "eks_cluster" {
 
   vpc_config {
     endpoint_private_access = true
+    endpoint_public_access  = false
     subnet_ids              = ["${aws_subnet.eks_subnet1.id}", "${aws_subnet.eks_subnet2.id}"]
   }
 

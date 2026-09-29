@@ -17,8 +17,8 @@ resource "aws_elb" "weblb" {
     interval            = 30
   }
 
-  subnets                     = [aws_subnet.web_subnet.id]
-  security_groups             = [aws_security_group.web-node.id]
+  subnets                     = [aws_subnet.web_subnet.id, aws_subnet.web_subnet2.id]
+  security_groups             = [aws_security_group.weblb.id]
   instances                   = [aws_instance.web_host.id]
   cross_zone_load_balancing   = true
   idle_timeout                = 400

@@ -47,3 +47,9 @@ variable "neptune-dbname" {
   description = "Name of the Neptune graph database"
   default     = "neptunedb1"
 }
+
+variable "trusted_cidr_blocks" {
+  type        = list(string)
+  description = "CIDR blocks allowed to reach the web ELB (e.g. corporate VPN egress ranges)"
+  default     = ["10.0.0.0/8"]
+}

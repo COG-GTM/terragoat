@@ -19,7 +19,7 @@ resource "aws_db_instance" "default" {
   storage_encrypted       = false
   skip_final_snapshot     = true
   monitoring_interval     = 0
-  publicly_accessible     = true
+  publicly_accessible     = false
 
   tags = merge({
     Name        = "${local.resource_prefix.value}-rds"
@@ -96,7 +96,7 @@ resource "aws_db_parameter_group" "default" {
 
 resource "aws_db_subnet_group" "default" {
   name        = "sg-${local.resource_prefix.value}"
-  subnet_ids  = ["${aws_subnet.web_subnet.id}", "${aws_subnet.web_subnet2.id}"]
+  subnet_ids  = [aws_subnet.web_private_subnet.id, aws_subnet.web_private_subnet2.id]
   description = "Terraform DB Subnet Group"
 
   tags = merge({
@@ -115,8 +115,9 @@ resource "aws_db_subnet_group" "default" {
 }
 
 resource "aws_security_group" "default" {
-  name   = "${local.resource_prefix.value}-rds-sg"
-  vpc_id = aws_vpc.web_vpc.id
+  name        = "${local.resource_prefix.value}-rds-sg"
+  description = "${local.resource_prefix.value} RDS MySQL"
+  vpc_id      = aws_vpc.web_vpc.id
 
   tags = merge({
     Name        = "${local.resource_prefix.value}-rds-sg"
@@ -134,21 +135,13 @@ resource "aws_security_group" "default" {
 }
 
 resource "aws_security_group_rule" "ingress" {
-  type              = "ingress"
-  from_port         = "3306"
-  to_port           = "3306"
-  protocol          = "tcp"
-  cidr_blocks       = ["${aws_vpc.web_vpc.cidr_block}"]
-  security_group_id = aws_security_group.default.id
-}
-
-resource "aws_security_group_rule" "egress" {
-  type              = "egress"
-  from_port         = 0
-  to_port           = 0
-  protocol          = "-1"
-  cidr_blocks       = ["0.0.0.0/0"]
-  security_group_id = "${aws_security_group.default.id}"
+  type                     = "ingress"
+  description              = "MySQL from web tier instances"
+  from_port                = "3306"
+  to_port                  = "3306"
+  protocol                 = "tcp"
+  source_security_group_id = aws_security_group.web-node.id
+  security_group_id        = aws_security_group.default.id
 }
 
 
@@ -248,7 +241,7 @@ resource "aws_instance" "db_app" {
 
   vpc_security_group_ids = [
   "${aws_security_group.web-node.id}"]
-  subnet_id = "${aws_subnet.web_subnet.id}"
+  subnet_id = aws_subnet.web_private_subnet.id
   user_data = <<EOF
 #! /bin/bash
 ### Config from https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/CHAP_Tutorials.WebServerDB.CreateWebServer.html
