@@ -1,12 +1,16 @@
 resource "aws_neptune_cluster" "default" {
-  cluster_identifier                  = var.neptune-dbname
-  engine                              = "neptune"
-  backup_retention_period             = 5
-  preferred_backup_window             = "07:00-09:00"
-  skip_final_snapshot                 = true
-  iam_database_authentication_enabled = false
-  apply_immediately                   = true
-  storage_encrypted                   = false
+  cluster_identifier                   = var.neptune-dbname
+  engine                               = "neptune"
+  engine_version                       = "1.3.2.1"
+  backup_retention_period              = 5
+  preferred_backup_window              = "07:00-09:00"
+  skip_final_snapshot                  = true
+  iam_database_authentication_enabled  = false
+  apply_immediately                    = true
+  storage_encrypted                    = true
+  kms_key_arn                          = aws_kms_key.neptune.arn
+  enable_cloudwatch_logs_exports       = ["audit"]
+  neptune_cluster_parameter_group_name = aws_neptune_cluster_parameter_group.audit.name
   tags = {
     git_commit           = "aa8fd16fd94cccf6af206e2f0922b5558f8ac514"
     git_file             = "terraform/aws/neptune.tf"
@@ -39,7 +43,38 @@ resource "aws_neptune_cluster_instance" "default" {
 }
 
 resource "aws_neptune_cluster_snapshot" "default" {
+  #checkov:skip=CKV_AWS_279:Snapshot encryption is inherited from the source cluster (storage_encrypted = true); aws_neptune_cluster_snapshot exposes storage_encrypted only as a read-only attribute
+  #checkov:skip=CKV_AWS_280:Snapshot uses the source cluster's CMK (aws_kms_key.neptune); aws_neptune_cluster_snapshot exposes kms_key_id only as a read-only attribute
   db_cluster_identifier          = aws_neptune_cluster.default.id
   db_cluster_snapshot_identifier = "resourcetestsnapshot1"
 }
 
+resource "aws_neptune_cluster_parameter_group" "audit" {
+  family      = "neptune1.3"
+  name_prefix = "${var.environment}-neptune-audit-"
+  description = "Neptune cluster parameters with audit logging enabled"
+
+  parameter {
+    name  = "neptune_enable_audit_log"
+    value = "1"
+  }
+}
+
+resource "aws_kms_key" "neptune" {
+  description             = "${local.resource_prefix.value}-neptune storage key"
+  deletion_window_in_days = 7
+  enable_key_rotation     = true
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Sid       = "EnableRootAccountPermissions"
+        Effect    = "Allow"
+        Principal = { AWS = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:root" }
+        Action    = "kms:*"
+        Resource  = "*"
+      }
+    ]
+  })
+}

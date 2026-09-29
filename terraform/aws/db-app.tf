@@ -207,22 +207,35 @@ resource "aws_iam_role_policy" "ec2policy" {
   name = "${local.resource_prefix.value}-policy"
   role = aws_iam_role.ec2role.id
 
-  policy = <<EOF
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Action": [
-        "s3:*",
-        "ec2:*",
-        "rds:*"
-      ],
-      "Effect": "Allow",
-      "Resource": "*"
-    }
-  ]
-}
-EOF
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Sid      = "ReadInstanceTags"
+        Effect   = "Allow"
+        Action   = ["ec2:DescribeTags"]
+        Resource = "*"
+      },
+      {
+        Sid      = "DescribeAppDatabase"
+        Effect   = "Allow"
+        Action   = ["rds:DescribeDBInstances"]
+        Resource = aws_db_instance.default.arn
+      },
+      {
+        Sid      = "ListDataBucket"
+        Effect   = "Allow"
+        Action   = ["s3:ListBucket"]
+        Resource = aws_s3_bucket.data.arn
+      },
+      {
+        Sid      = "ReadDataBucketObjects"
+        Effect   = "Allow"
+        Action   = ["s3:GetObject"]
+        Resource = "${aws_s3_bucket.data.arn}/*"
+      }
+    ]
+  })
 }
 
 data "aws_ami" "amazon-linux-2" {
@@ -249,6 +262,12 @@ resource "aws_instance" "db_app" {
   vpc_security_group_ids = [
   "${aws_security_group.web-node.id}"]
   subnet_id = "${aws_subnet.web_subnet.id}"
+
+  metadata_options {
+    http_endpoint = "enabled"
+    http_tokens   = "required"
+  }
+
   user_data = <<EOF
 #! /bin/bash
 ### Config from https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/CHAP_Tutorials.WebServerDB.CreateWebServer.html

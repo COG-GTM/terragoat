@@ -29,6 +29,23 @@ EOF
   }
 }
 
+resource "aws_signer_signing_profile" "lambda" {
+  platform_id = "AWSLambda-SHA384-ECDSA"
+  name_prefix = "${var.company_name}_${var.environment}_lambda_"
+}
+
+resource "aws_lambda_code_signing_config" "analysis_lambda" {
+  description = "${local.resource_prefix.value}-analysis code signing"
+
+  allowed_publishers {
+    signing_profile_version_arns = [aws_signer_signing_profile.lambda.version_arn]
+  }
+
+  policies {
+    untrusted_artifact_on_deployment = "Warn"
+  }
+}
+
 resource "aws_lambda_function" "analysis_lambda" {
   # lambda have plain text secrets in environment variables
   filename      = "resources/lambda_function_payload.zip"
@@ -39,6 +56,8 @@ resource "aws_lambda_function" "analysis_lambda" {
   source_code_hash = "${filebase64sha256("resources/lambda_function_payload.zip")}"
 
   runtime = "nodejs12.x"
+
+  code_signing_config_arn = aws_lambda_code_signing_config.analysis_lambda.arn
 
   environment {
     variables = {

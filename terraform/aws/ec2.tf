@@ -1,19 +1,23 @@
 resource "aws_instance" "web_host" {
-  # ec2 have plain text secrets in user data
-  ami           = "${var.ami}"
-  instance_type = "t2.nano"
+  ami                  = "${var.ami}"
+  instance_type        = "t2.nano"
+  iam_instance_profile = aws_iam_instance_profile.ec2profile.name
 
   vpc_security_group_ids = [
   "${aws_security_group.web-node.id}"]
   subnet_id = "${aws_subnet.web_subnet.id}"
+
+  metadata_options {
+    http_endpoint = "enabled"
+    http_tokens   = "required"
+  }
+
   user_data = <<EOF
 #! /bin/bash
 sudo apt-get update
 sudo apt-get install -y apache2
 sudo systemctl start apache2
 sudo systemctl enable apache2
-export AWS_ACCESS_KEY_ID=AKIAIOSFODNN7EXAMAAA
-export AWS_SECRET_ACCESS_KEY=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
 export AWS_DEFAULT_REGION=us-west-2
 echo "<h1>Deployed via Terraform</h1>" | sudo tee /var/www/html/index.html
 EOF
@@ -32,10 +36,9 @@ EOF
 }
 
 resource "aws_ebs_volume" "web_host_storage" {
-  # unencrypted volume
   availability_zone = "${var.region}a"
-  #encrypted         = false  # Setting this causes the volume to be recreated on apply 
-  size = 1
+  encrypted         = true
+  size              = 1
   tags = merge({
     Name = "${local.resource_prefix.value}-ebs"
     }, {
@@ -51,7 +54,6 @@ resource "aws_ebs_volume" "web_host_storage" {
 }
 
 resource "aws_ebs_snapshot" "example_snapshot" {
-  # ebs snapshot without encryption
   volume_id   = "${aws_ebs_volume.web_host_storage.id}"
   description = "${local.resource_prefix.value}-ebs-snapshot"
   tags = merge({
@@ -86,6 +88,13 @@ resource "aws_security_group" "web-node" {
     protocol  = "tcp"
     cidr_blocks = [
     "0.0.0.0/0"]
+  }
+  ingress {
+    description = "HTTPS to the web load balancer"
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
   }
   ingress {
     from_port = 22

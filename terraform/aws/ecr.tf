@@ -2,6 +2,10 @@ resource aws_ecr_repository "repository" {
   name                 = "${local.resource_prefix.value}-repository"
   image_tag_mutability = "MUTABLE"
 
+  image_scanning_configuration {
+    scan_on_push = true
+  }
+
 
   tags = merge({
     Name = "${local.resource_prefix.value}-repository"

@@ -47,3 +47,8 @@ variable "neptune-dbname" {
   description = "Name of the Neptune graph database"
   default     = "neptunedb1"
 }
+
+variable "elb_acm_certificate_arn" {
+  type        = string
+  description = "ARN of the ACM certificate used by the web ELB HTTPS listener"
+}

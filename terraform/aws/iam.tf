@@ -26,23 +26,39 @@ resource "aws_iam_user_policy" "userpolicy" {
   name = "excess_policy"
   user = "${aws_iam_user.user.name}"
 
-  policy = <<EOF
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Action": [
-        "ec2:*",
-        "s3:*",
-        "lambda:*",
-        "cloudwatch:*"
-      ],
-      "Effect": "Allow",
-      "Resource": "*"
-    }
-  ]
-}
-EOF
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Sid    = "ReadOnlyDescribe"
+        Effect = "Allow"
+        Action = [
+          "ec2:DescribeInstances",
+          "cloudwatch:GetMetricData",
+          "cloudwatch:ListMetrics",
+        ]
+        Resource = "*"
+      },
+      {
+        Sid      = "ListDataBucket"
+        Effect   = "Allow"
+        Action   = ["s3:ListBucket"]
+        Resource = aws_s3_bucket.data.arn
+      },
+      {
+        Sid      = "ReadWriteDataBucketObjects"
+        Effect   = "Allow"
+        Action   = ["s3:GetObject", "s3:PutObject"]
+        Resource = "${aws_s3_bucket.data.arn}/*"
+      },
+      {
+        Sid      = "InvokeAnalysisLambda"
+        Effect   = "Allow"
+        Action   = ["lambda:GetFunction", "lambda:InvokeFunction"]
+        Resource = aws_lambda_function.analysis_lambda.arn
+      }
+    ]
+  })
 }
 
 output "username" {

@@ -3,10 +3,11 @@ resource "aws_elb" "weblb" {
   name = "weblb-terraform-elb"
 
   listener {
-    instance_port     = 8000
-    instance_protocol = "http"
-    lb_port           = 80
-    lb_protocol       = "http"
+    instance_port      = 8000
+    instance_protocol  = "http"
+    lb_port            = 443
+    lb_protocol        = "https"
+    ssl_certificate_id = var.elb_acm_certificate_arn
   }
 
   health_check {
