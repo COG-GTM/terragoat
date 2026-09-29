@@ -59,6 +59,10 @@ resource aws_vpc "eks_vpc" {
   })
 }
 
+resource "aws_default_security_group" "eks_vpc_default" {
+  vpc_id = aws_vpc.eks_vpc.id
+}
+
 resource aws_subnet "eks_subnet1" {
   vpc_id                  = aws_vpc.eks_vpc.id
   cidr_block              = "10.10.10.0/24"

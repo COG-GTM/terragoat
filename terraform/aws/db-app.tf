@@ -19,7 +19,7 @@ resource "aws_db_instance" "default" {
   storage_encrypted       = false
   skip_final_snapshot     = true
   monitoring_interval     = 0
-  publicly_accessible     = true
+  publicly_accessible     = false
 
   tags = merge({
     Name        = "${local.resource_prefix.value}-rds"
@@ -135,6 +135,7 @@ resource "aws_security_group" "default" {
 
 resource "aws_security_group_rule" "ingress" {
   type              = "ingress"
+  description       = "MySQL from within the VPC"
   from_port         = "3306"
   to_port           = "3306"
   protocol          = "tcp"
@@ -144,10 +145,11 @@ resource "aws_security_group_rule" "ingress" {
 
 resource "aws_security_group_rule" "egress" {
   type              = "egress"
+  description       = "Outbound traffic within the VPC"
   from_port         = 0
   to_port           = 0
   protocol          = "-1"
-  cidr_blocks       = ["0.0.0.0/0"]
+  cidr_blocks       = ["${aws_vpc.web_vpc.cidr_block}"]
   security_group_id = "${aws_security_group.default.id}"
 }
 

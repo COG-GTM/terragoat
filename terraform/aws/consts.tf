@@ -17,6 +17,17 @@ locals {
 
 
 
+variable "ssh_ingress_cidr_blocks" {
+  type        = list(string)
+  description = "CIDR blocks allowed to SSH to the web tier. Empty disables SSH ingress."
+  default     = []
+
+  validation {
+    condition     = !contains(var.ssh_ingress_cidr_blocks, "0.0.0.0/0")
+    error_message = "SSH must not be open to 0.0.0.0/0."
+  }
+}
+
 variable "profile" {
   default = "default"
 }
