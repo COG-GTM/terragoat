@@ -1,0 +1,1173 @@
+{
+    "failed_checks": [
+        {
+            "file": "/alicloud/bucket.tf",
+            "findings": [
+                {
+                    "resource": "alicloud_oss_bucket.bad_bucket",
+                    "check_ids": [
+                        "CKV_ALI_1",
+                        "CKV_ALI_10",
+                        "CKV_ALI_11",
+                        "CKV_ALI_12",
+                        "CKV_ALI_6"
+                    ]
+                }
+            ]
+        },
+        {
+            "file": "/alicloud/rds.tf",
+            "findings": [
+                {
+                    "resource": "alicloud_db_instance.seeme",
+                    "check_ids": [
+                        "CKV_ALI_20",
+                        "CKV_ALI_25",
+                        "CKV_ALI_30",
+                        "CKV_ALI_35",
+                        "CKV_ALI_36",
+                        "CKV_ALI_37",
+                        "CKV_ALI_9"
+                    ]
+                }
+            ]
+        },
+        {
+            "file": "/alicloud/trail.tf",
+            "findings": [
+                {
+                    "resource": "alicloud_actiontrail_trail.fail",
+                    "check_ids": [
+                        "CKV_ALI_4",
+                        "CKV_ALI_5"
+                    ]
+                },
+                {
+                    "resource": "alicloud_oss_bucket.trail",
+                    "check_ids": [
+                        "CKV_ALI_10",
+                        "CKV_ALI_11",
+                        "CKV_ALI_12",
+                        "CKV_ALI_6"
+                    ]
+                }
+            ]
+        },
+        {
+            "file": "/aws/db-app.tf",
+            "findings": [
+                {
+                    "resource": "aws_db_instance.default",
+                    "check_ids": [
+                        "CKV2_AWS_60",
+                        "CKV2_AWS_69",
+                        "CKV_AWS_118",
+                        "CKV_AWS_129",
+                        "CKV_AWS_133",
+                        "CKV_AWS_157",
+                        "CKV_AWS_16",
+                        "CKV_AWS_161",
+                        "CKV_AWS_17",
+                        "CKV_AWS_226",
+                        "CKV_AWS_293"
+                    ]
+                },
+                {
+                    "resource": "aws_iam_role_policy.ec2policy",
+                    "check_ids": [
+                        "CKV_AWS_287",
+                        "CKV_AWS_288",
+                        "CKV_AWS_289",
+                        "CKV_AWS_290",
+                        "CKV_AWS_355"
+                    ]
+                },
+                {
+                    "resource": "aws_instance.db_app",
+                    "check_ids": [
+                        "CKV_AWS_126",
+                        "CKV_AWS_135",
+                        "CKV_AWS_79",
+                        "CKV_AWS_8"
+                    ]
+                },
+                {
+                    "resource": "aws_security_group.default",
+                    "check_ids": [
+                        "CKV_AWS_23"
+                    ]
+                },
+                {
+                    "resource": "aws_security_group_rule.egress",
+                    "check_ids": [
+                        "CKV_AWS_23",
+                        "CKV_AWS_382"
+                    ]
+                },
+                {
+                    "resource": "aws_security_group_rule.ingress",
+                    "check_ids": [
+                        "CKV_AWS_23"
+                    ]
+                }
+            ]
+        },
+        {
+            "file": "/aws/ec2.tf",
+            "findings": [
+                {
+                    "resource": "aws_ebs_volume.web_host_storage",
+                    "check_ids": [
+                        "CKV2_AWS_2",
+                        "CKV_AWS_189",
+                        "CKV_AWS_3"
+                    ]
+                },
+                {
+                    "resource": "aws_instance.web_host",
+                    "check_ids": [
+                        "CKV2_AWS_41",
+                        "CKV_AWS_126",
+                        "CKV_AWS_135",
+                        "CKV_AWS_46",
+                        "CKV_AWS_79",
+                        "CKV_AWS_8"
+                    ]
+                },
+                {
+                    "resource": "aws_s3_bucket.flowbucket",
+                    "check_ids": [
+                        "CKV2_AWS_6",
+                        "CKV2_AWS_61",
+                        "CKV2_AWS_62",
+                        "CKV_AWS_144",
+                        "CKV_AWS_145",
+                        "CKV_AWS_18",
+                        "CKV_AWS_21"
+                    ]
+                },
+                {
+                    "resource": "aws_security_group.web-node",
+                    "check_ids": [
+                        "CKV_AWS_23",
+                        "CKV_AWS_24",
+                        "CKV_AWS_260",
+                        "CKV_AWS_382"
+                    ]
+                },
+                {
+                    "resource": "aws_subnet.web_subnet",
+                    "check_ids": [
+                        "CKV_AWS_130"
+                    ]
+                },
+                {
+                    "resource": "aws_subnet.web_subnet2",
+                    "check_ids": [
+                        "CKV_AWS_130"
+                    ]
+                },
+                {
+                    "resource": "aws_vpc.web_vpc",
+                    "check_ids": [
+                        "CKV2_AWS_12"
+                    ]
+                },
+                {
+                    "resource": "c00f1a6e4b20aa64691d50781b810756d6254b8e",
+                    "check_ids": [
+                        "CKV_SECRET_2"
+                    ]
+                },
+                {
+                    "resource": "fc3f784491eba6121c3bfcc1652a2c57d27b16cb",
+                    "check_ids": [
+                        "CKV_SECRET_2"
+                    ]
+                }
+            ]
+        },
+        {
+            "file": "/aws/ecr.tf",
+            "findings": [
+                {
+                    "resource": "aws_ecr_repository.repository",
+                    "check_ids": [
+                        "CKV_AWS_136",
+                        "CKV_AWS_163",
+                        "CKV_AWS_51"
+                    ]
+                }
+            ]
+        },
+        {
+            "file": "/aws/eks.tf",
+            "findings": [
+                {
+                    "resource": "aws_eks_cluster.eks_cluster",
+                    "check_ids": [
+                        "CKV_AWS_37",
+                        "CKV_AWS_38",
+                        "CKV_AWS_39",
+                        "CKV_AWS_58"
+                    ]
+                },
+                {
+                    "resource": "aws_subnet.eks_subnet1",
+                    "check_ids": [
+                        "CKV_AWS_130"
+                    ]
+                },
+                {
+                    "resource": "aws_subnet.eks_subnet2",
+                    "check_ids": [
+                        "CKV_AWS_130"
+                    ]
+                },
+                {
+                    "resource": "aws_vpc.eks_vpc",
+                    "check_ids": [
+                        "CKV2_AWS_11",
+                        "CKV2_AWS_12"
+                    ]
+                }
+            ]
+        },
+        {
+            "file": "/aws/elb.tf",
+            "findings": [
+                {
+                    "resource": "aws_elb.weblb",
+                    "check_ids": [
+                        "CKV_AWS_127",
+                        "CKV_AWS_376",
+                        "CKV_AWS_92"
+                    ]
+                }
+            ]
+        },
+        {
+            "file": "/aws/es.tf",
+            "findings": [
+                {
+                    "resource": "aws_elasticsearch_domain.monitoring-framework",
+                    "check_ids": [
+                        "CKV2_AWS_52",
+                        "CKV2_AWS_59",
+                        "CKV_AWS_137",
+                        "CKV_AWS_228",
+                        "CKV_AWS_247",
+                        "CKV_AWS_248",
+                        "CKV_AWS_317",
+                        "CKV_AWS_318",
+                        "CKV_AWS_5",
+                        "CKV_AWS_84"
+                    ]
+                },
+                {
+                    "resource": "aws_iam_policy_document.policy",
+                    "check_ids": [
+                        "CKV_AWS_109",
+                        "CKV_AWS_111",
+                        "CKV_AWS_283",
+                        "CKV_AWS_356"
+                    ]
+                }
+            ]
+        },
+        {
+            "file": "/aws/iam.tf",
+            "findings": [
+                {
+                    "resource": "aws_iam_user.user",
+                    "check_ids": [
+                        "CKV_AWS_273"
+                    ]
+                },
+                {
+                    "resource": "aws_iam_user_policy.userpolicy",
+                    "check_ids": [
+                        "CKV_AWS_286",
+                        "CKV_AWS_287",
+                        "CKV_AWS_288",
+                        "CKV_AWS_289",
+                        "CKV_AWS_290",
+                        "CKV_AWS_355"
+                    ]
+                }
+            ]
+        },
+        {
+            "file": "/aws/kms.tf",
+            "findings": [
+                {
+                    "resource": "aws_kms_key.logs_key",
+                    "check_ids": [
+                        "CKV2_AWS_64",
+                        "CKV_AWS_7"
+                    ]
+                }
+            ]
+        },
+        {
+            "file": "/aws/lambda.tf",
+            "findings": [
+                {
+                    "resource": "25910f981e85ca04baf359199dd0bd4a3ae738b6",
+                    "check_ids": [
+                        "CKV_SECRET_2"
+                    ]
+                },
+                {
+                    "resource": "aws_lambda_function.analysis_lambda",
+                    "check_ids": [
+                        "CKV_AWS_115",
+                        "CKV_AWS_116",
+                        "CKV_AWS_117",
+                        "CKV_AWS_173",
+                        "CKV_AWS_272",
+                        "CKV_AWS_363",
+                        "CKV_AWS_45",
+                        "CKV_AWS_50"
+                    ]
+                }
+            ]
+        },
+        {
+            "file": "/aws/neptune.tf",
+            "findings": [
+                {
+                    "resource": "aws_neptune_cluster.default",
+                    "check_ids": [
+                        "CKV2_AWS_58",
+                        "CKV_AWS_101",
+                        "CKV_AWS_347",
+                        "CKV_AWS_359",
+                        "CKV_AWS_361",
+                        "CKV_AWS_362",
+                        "CKV_AWS_44"
+                    ]
+                },
+                {
+                    "resource": "aws_neptune_cluster_snapshot.default",
+                    "check_ids": [
+                        "CKV_AWS_279",
+                        "CKV_AWS_280"
+                    ]
+                }
+            ]
+        },
+        {
+            "file": "/aws/providers.tf",
+            "findings": [
+                {
+                    "resource": "25910f981e85ca04baf359199dd0bd4a3ae738b6",
+                    "check_ids": [
+                        "CKV_SECRET_2"
+                    ]
+                },
+                {
+                    "resource": "aws.plain_text_access_keys_provider",
+                    "check_ids": [
+                        "CKV_AWS_41"
+                    ]
+                }
+            ]
+        },
+        {
+            "file": "/aws/rds.tf",
+            "findings": [
+                {
+                    "resource": "aws_rds_cluster.app1-rds-cluster",
+                    "check_ids": [
+                        "CKV2_AWS_8",
+                        "CKV_AWS_133",
+                        "CKV_AWS_139",
+                        "CKV_AWS_162",
+                        "CKV_AWS_313",
+                        "CKV_AWS_324",
+                        "CKV_AWS_325",
+                        "CKV_AWS_326",
+                        "CKV_AWS_327",
+                        "CKV_AWS_96"
+                    ]
+                },
+                {
+                    "resource": "aws_rds_cluster.app2-rds-cluster",
+                    "check_ids": [
+                        "CKV2_AWS_8",
+                        "CKV_AWS_139",
+                        "CKV_AWS_162",
+                        "CKV_AWS_313",
+                        "CKV_AWS_324",
+                        "CKV_AWS_325",
+                        "CKV_AWS_326",
+                        "CKV_AWS_327",
+                        "CKV_AWS_96"
+                    ]
+                },
+                {
+                    "resource": "aws_rds_cluster.app3-rds-cluster",
+                    "check_ids": [
+                        "CKV2_AWS_8",
+                        "CKV_AWS_139",
+                        "CKV_AWS_162",
+                        "CKV_AWS_313",
+                        "CKV_AWS_324",
+                        "CKV_AWS_325",
+                        "CKV_AWS_326",
+                        "CKV_AWS_327",
+                        "CKV_AWS_96"
+                    ]
+                },
+                {
+                    "resource": "aws_rds_cluster.app4-rds-cluster",
+                    "check_ids": [
+                        "CKV2_AWS_8",
+                        "CKV_AWS_139",
+                        "CKV_AWS_162",
+                        "CKV_AWS_313",
+                        "CKV_AWS_324",
+                        "CKV_AWS_325",
+                        "CKV_AWS_326",
+                        "CKV_AWS_327",
+                        "CKV_AWS_96"
+                    ]
+                },
+                {
+                    "resource": "aws_rds_cluster.app5-rds-cluster",
+                    "check_ids": [
+                        "CKV2_AWS_8",
+                        "CKV_AWS_139",
+                        "CKV_AWS_162",
+                        "CKV_AWS_313",
+                        "CKV_AWS_324",
+                        "CKV_AWS_325",
+                        "CKV_AWS_326",
+                        "CKV_AWS_327",
+                        "CKV_AWS_96"
+                    ]
+                },
+                {
+                    "resource": "aws_rds_cluster.app6-rds-cluster",
+                    "check_ids": [
+                        "CKV2_AWS_8",
+                        "CKV_AWS_139",
+                        "CKV_AWS_162",
+                        "CKV_AWS_313",
+                        "CKV_AWS_324",
+                        "CKV_AWS_325",
+                        "CKV_AWS_326",
+                        "CKV_AWS_327",
+                        "CKV_AWS_96"
+                    ]
+                },
+                {
+                    "resource": "aws_rds_cluster.app7-rds-cluster",
+                    "check_ids": [
+                        "CKV2_AWS_8",
+                        "CKV_AWS_139",
+                        "CKV_AWS_162",
+                        "CKV_AWS_313",
+                        "CKV_AWS_324",
+                        "CKV_AWS_325",
+                        "CKV_AWS_326",
+                        "CKV_AWS_327",
+                        "CKV_AWS_96"
+                    ]
+                },
+                {
+                    "resource": "aws_rds_cluster.app8-rds-cluster",
+                    "check_ids": [
+                        "CKV2_AWS_8",
+                        "CKV_AWS_139",
+                        "CKV_AWS_162",
+                        "CKV_AWS_313",
+                        "CKV_AWS_324",
+                        "CKV_AWS_325",
+                        "CKV_AWS_326",
+                        "CKV_AWS_327",
+                        "CKV_AWS_96"
+                    ]
+                },
+                {
+                    "resource": "aws_rds_cluster.app9-rds-cluster",
+                    "check_ids": [
+                        "CKV2_AWS_8",
+                        "CKV_AWS_139",
+                        "CKV_AWS_162",
+                        "CKV_AWS_313",
+                        "CKV_AWS_324",
+                        "CKV_AWS_325",
+                        "CKV_AWS_326",
+                        "CKV_AWS_327",
+                        "CKV_AWS_96"
+                    ]
+                }
+            ]
+        },
+        {
+            "file": "/aws/resources/Dockerfile",
+            "findings": [
+                {
+                    "resource": "/aws/resources/Dockerfile.",
+                    "check_ids": [
+                        "CKV_DOCKER_2",
+                        "CKV_DOCKER_3"
+                    ]
+                }
+            ]
+        },
+        {
+            "file": "/aws/s3.tf",
+            "findings": [
+                {
+                    "resource": "aws_s3_bucket.data",
+                    "check_ids": [
+                        "CKV2_AWS_6",
+                        "CKV2_AWS_61",
+                        "CKV2_AWS_62",
+                        "CKV_AWS_144",
+                        "CKV_AWS_145",
+                        "CKV_AWS_18",
+                        "CKV_AWS_21"
+                    ]
+                },
+                {
+                    "resource": "aws_s3_bucket.data_science",
+                    "check_ids": [
+                        "CKV2_AWS_6",
+                        "CKV2_AWS_61",
+                        "CKV2_AWS_62",
+                        "CKV_AWS_144",
+                        "CKV_AWS_145"
+                    ]
+                },
+                {
+                    "resource": "aws_s3_bucket.financials",
+                    "check_ids": [
+                        "CKV2_AWS_6",
+                        "CKV2_AWS_61",
+                        "CKV2_AWS_62",
+                        "CKV_AWS_144",
+                        "CKV_AWS_145",
+                        "CKV_AWS_18",
+                        "CKV_AWS_21"
+                    ]
+                },
+                {
+                    "resource": "aws_s3_bucket.logs",
+                    "check_ids": [
+                        "CKV2_AWS_6",
+                        "CKV2_AWS_61",
+                        "CKV2_AWS_62",
+                        "CKV_AWS_144",
+                        "CKV_AWS_18"
+                    ]
+                },
+                {
+                    "resource": "aws_s3_bucket.operations",
+                    "check_ids": [
+                        "CKV2_AWS_6",
+                        "CKV2_AWS_61",
+                        "CKV2_AWS_62",
+                        "CKV_AWS_144",
+                        "CKV_AWS_145",
+                        "CKV_AWS_18"
+                    ]
+                },
+                {
+                    "resource": "aws_s3_bucket_object.data_object",
+                    "check_ids": [
+                        "CKV_AWS_186"
+                    ]
+                }
+            ]
+        },
+        {
+            "file": "/azure/aks.tf",
+            "findings": [
+                {
+                    "resource": "azurerm_kubernetes_cluster.k8s_cluster",
+                    "check_ids": [
+                        "CKV2_AZURE_29",
+                        "CKV_AZURE_115",
+                        "CKV_AZURE_116",
+                        "CKV_AZURE_117",
+                        "CKV_AZURE_141",
+                        "CKV_AZURE_168",
+                        "CKV_AZURE_170",
+                        "CKV_AZURE_171",
+                        "CKV_AZURE_172",
+                        "CKV_AZURE_226",
+                        "CKV_AZURE_227",
+                        "CKV_AZURE_232",
+                        "CKV_AZURE_4",
+                        "CKV_AZURE_5",
+                        "CKV_AZURE_6",
+                        "CKV_AZURE_7",
+                        "CKV_AZURE_8"
+                    ]
+                }
+            ]
+        },
+        {
+            "file": "/azure/app_service.tf",
+            "findings": [
+                {
+                    "resource": "azurerm_app_service.app-service1",
+                    "check_ids": [
+                        "CKV_AZURE_13",
+                        "CKV_AZURE_14",
+                        "CKV_AZURE_15",
+                        "CKV_AZURE_16",
+                        "CKV_AZURE_17",
+                        "CKV_AZURE_18",
+                        "CKV_AZURE_213",
+                        "CKV_AZURE_63",
+                        "CKV_AZURE_65",
+                        "CKV_AZURE_66",
+                        "CKV_AZURE_71",
+                        "CKV_AZURE_78",
+                        "CKV_AZURE_88"
+                    ]
+                },
+                {
+                    "resource": "azurerm_app_service.app-service2",
+                    "check_ids": [
+                        "CKV_AZURE_13",
+                        "CKV_AZURE_16",
+                        "CKV_AZURE_17",
+                        "CKV_AZURE_18",
+                        "CKV_AZURE_213",
+                        "CKV_AZURE_63",
+                        "CKV_AZURE_65",
+                        "CKV_AZURE_66",
+                        "CKV_AZURE_71",
+                        "CKV_AZURE_78",
+                        "CKV_AZURE_88"
+                    ]
+                }
+            ]
+        },
+        {
+            "file": "/azure/application_gateway.tf",
+            "findings": [
+                {
+                    "resource": "azurerm_application_gateway.network",
+                    "check_ids": [
+                        "CKV_AZURE_120",
+                        "CKV_AZURE_217",
+                        "CKV_AZURE_218"
+                    ]
+                }
+            ]
+        },
+        {
+            "file": "/azure/instance.tf",
+            "findings": [
+                {
+                    "resource": "azurerm_linux_virtual_machine.linux_machine",
+                    "check_ids": [
+                        "CKV_AZURE_1",
+                        "CKV_AZURE_149",
+                        "CKV_AZURE_178",
+                        "CKV_AZURE_50"
+                    ]
+                },
+                {
+                    "resource": "azurerm_windows_virtual_machine.windows_machine",
+                    "check_ids": [
+                        "CKV_AZURE_151",
+                        "CKV_AZURE_50"
+                    ]
+                }
+            ]
+        },
+        {
+            "file": "/azure/key_vault.tf",
+            "findings": [
+                {
+                    "resource": "azurerm_key_vault.example",
+                    "check_ids": [
+                        "CKV2_AZURE_32",
+                        "CKV_AZURE_109",
+                        "CKV_AZURE_110",
+                        "CKV_AZURE_189",
+                        "CKV_AZURE_42"
+                    ]
+                },
+                {
+                    "resource": "azurerm_key_vault_key.generated",
+                    "check_ids": [
+                        "CKV_AZURE_112",
+                        "CKV_AZURE_40"
+                    ]
+                },
+                {
+                    "resource": "azurerm_key_vault_secret.secret",
+                    "check_ids": [
+                        "CKV_AZURE_114",
+                        "CKV_AZURE_41"
+                    ]
+                }
+            ]
+        },
+        {
+            "file": "/azure/logging.tf",
+            "findings": [
+                {
+                    "resource": "azurerm_monitor_log_profile.logging_profile",
+                    "check_ids": [
+                        "CKV_AZURE_37",
+                        "CKV_AZURE_38"
+                    ]
+                }
+            ]
+        },
+        {
+            "file": "/azure/mssql.tf",
+            "findings": [
+                {
+                    "resource": "azurerm_mssql_server.mssql1",
+                    "check_ids": [
+                        "CKV2_AZURE_27",
+                        "CKV2_AZURE_45",
+                        "CKV_AZURE_113",
+                        "CKV_AZURE_23",
+                        "CKV_AZURE_24",
+                        "CKV_AZURE_52"
+                    ]
+                },
+                {
+                    "resource": "azurerm_mssql_server.mssql2",
+                    "check_ids": [
+                        "CKV2_AZURE_27",
+                        "CKV2_AZURE_45",
+                        "CKV_AZURE_113",
+                        "CKV_AZURE_23",
+                        "CKV_AZURE_24",
+                        "CKV_AZURE_52"
+                    ]
+                },
+                {
+                    "resource": "azurerm_mssql_server.mssql3",
+                    "check_ids": [
+                        "CKV2_AZURE_27",
+                        "CKV2_AZURE_45",
+                        "CKV_AZURE_113",
+                        "CKV_AZURE_23",
+                        "CKV_AZURE_24",
+                        "CKV_AZURE_52"
+                    ]
+                },
+                {
+                    "resource": "azurerm_mssql_server.mssql4",
+                    "check_ids": [
+                        "CKV2_AZURE_27",
+                        "CKV2_AZURE_45",
+                        "CKV_AZURE_113",
+                        "CKV_AZURE_23",
+                        "CKV_AZURE_24",
+                        "CKV_AZURE_52"
+                    ]
+                },
+                {
+                    "resource": "azurerm_mssql_server.mssql5",
+                    "check_ids": [
+                        "CKV2_AZURE_27",
+                        "CKV2_AZURE_45",
+                        "CKV_AZURE_113",
+                        "CKV_AZURE_23",
+                        "CKV_AZURE_24",
+                        "CKV_AZURE_52"
+                    ]
+                },
+                {
+                    "resource": "azurerm_mssql_server.mssql6",
+                    "check_ids": [
+                        "CKV2_AZURE_27",
+                        "CKV2_AZURE_45",
+                        "CKV_AZURE_113",
+                        "CKV_AZURE_23",
+                        "CKV_AZURE_24",
+                        "CKV_AZURE_52"
+                    ]
+                },
+                {
+                    "resource": "azurerm_mssql_server.mssql7",
+                    "check_ids": [
+                        "CKV2_AZURE_27",
+                        "CKV2_AZURE_45",
+                        "CKV_AZURE_113",
+                        "CKV_AZURE_23",
+                        "CKV_AZURE_24",
+                        "CKV_AZURE_52"
+                    ]
+                },
+                {
+                    "resource": "azurerm_mssql_server_security_alert_policy.alertpolicy1",
+                    "check_ids": [
+                        "CKV_AZURE_25",
+                        "CKV_AZURE_27"
+                    ]
+                },
+                {
+                    "resource": "azurerm_mssql_server_security_alert_policy.alertpolicy2",
+                    "check_ids": [
+                        "CKV_AZURE_25",
+                        "CKV_AZURE_27"
+                    ]
+                },
+                {
+                    "resource": "azurerm_mssql_server_security_alert_policy.alertpolicy3",
+                    "check_ids": [
+                        "CKV_AZURE_25",
+                        "CKV_AZURE_27"
+                    ]
+                },
+                {
+                    "resource": "azurerm_mssql_server_security_alert_policy.alertpolicy4",
+                    "check_ids": [
+                        "CKV_AZURE_25",
+                        "CKV_AZURE_27"
+                    ]
+                },
+                {
+                    "resource": "azurerm_mssql_server_security_alert_policy.alertpolicy5",
+                    "check_ids": [
+                        "CKV_AZURE_25",
+                        "CKV_AZURE_26",
+                        "CKV_AZURE_27"
+                    ]
+                },
+                {
+                    "resource": "azurerm_mssql_server_security_alert_policy.alertpolicy6",
+                    "check_ids": [
+                        "CKV_AZURE_25",
+                        "CKV_AZURE_27"
+                    ]
+                },
+                {
+                    "resource": "azurerm_mssql_server_security_alert_policy.alertpolicy7",
+                    "check_ids": [
+                        "CKV_AZURE_25",
+                        "CKV_AZURE_27"
+                    ]
+                },
+                {
+                    "resource": "azurerm_storage_account.security_storage_account",
+                    "check_ids": [
+                        "CKV2_AZURE_1",
+                        "CKV2_AZURE_33",
+                        "CKV2_AZURE_38",
+                        "CKV2_AZURE_40",
+                        "CKV2_AZURE_41",
+                        "CKV2_AZURE_47",
+                        "CKV_AZURE_190",
+                        "CKV_AZURE_206",
+                        "CKV_AZURE_33",
+                        "CKV_AZURE_44",
+                        "CKV_AZURE_59"
+                    ]
+                }
+            ]
+        },
+        {
+            "file": "/azure/networking.tf",
+            "findings": [
+                {
+                    "resource": "azurerm_network_security_group.bad_sg",
+                    "check_ids": [
+                        "CKV_AZURE_10",
+                        "CKV_AZURE_9"
+                    ]
+                },
+                {
+                    "resource": "azurerm_network_watcher_flow_log.flow_log",
+                    "check_ids": [
+                        "CKV_AZURE_12"
+                    ]
+                },
+                {
+                    "resource": "azurerm_subnet.example",
+                    "check_ids": [
+                        "CKV2_AZURE_31"
+                    ]
+                }
+            ]
+        },
+        {
+            "file": "/azure/roles.tf",
+            "findings": [
+                {
+                    "resource": "azurerm_role_definition.example",
+                    "check_ids": [
+                        "CKV_AZURE_39"
+                    ]
+                }
+            ]
+        },
+        {
+            "file": "/azure/security_center.tf",
+            "findings": [
+                {
+                    "resource": "azurerm_security_center_contact.contact",
+                    "check_ids": [
+                        "CKV_AZURE_20",
+                        "CKV_AZURE_21",
+                        "CKV_AZURE_22"
+                    ]
+                },
+                {
+                    "resource": "azurerm_security_center_subscription_pricing.pricing",
+                    "check_ids": [
+                        "CKV_AZURE_19"
+                    ]
+                }
+            ]
+        },
+        {
+            "file": "/azure/sql.tf",
+            "findings": [
+                {
+                    "resource": "a57ae0fe47084bc8a05f69f3f8083896f8b437b0",
+                    "check_ids": [
+                        "CKV_SECRET_6"
+                    ]
+                },
+                {
+                    "resource": "azurerm_mssql_server_security_alert_policy.example",
+                    "check_ids": [
+                        "CKV_AZURE_25",
+                        "CKV_AZURE_26",
+                        "CKV_AZURE_27"
+                    ]
+                },
+                {
+                    "resource": "azurerm_mysql_server.example",
+                    "check_ids": [
+                        "CKV2_AZURE_16",
+                        "CKV2_AZURE_44",
+                        "CKV_AZURE_127",
+                        "CKV_AZURE_28",
+                        "CKV_AZURE_53",
+                        "CKV_AZURE_54",
+                        "CKV_AZURE_94"
+                    ]
+                },
+                {
+                    "resource": "azurerm_postgresql_configuration.example",
+                    "check_ids": [
+                        "CKV_AZURE_30"
+                    ]
+                },
+                {
+                    "resource": "azurerm_postgresql_configuration.thrtottling_config",
+                    "check_ids": [
+                        "CKV_AZURE_32"
+                    ]
+                },
+                {
+                    "resource": "azurerm_postgresql_server.example",
+                    "check_ids": [
+                        "CKV2_AZURE_42",
+                        "CKV_AZURE_102",
+                        "CKV_AZURE_128",
+                        "CKV_AZURE_130",
+                        "CKV_AZURE_147",
+                        "CKV_AZURE_29",
+                        "CKV_AZURE_68"
+                    ]
+                },
+                {
+                    "resource": "azurerm_sql_server.example",
+                    "check_ids": [
+                        "CKV2_AZURE_7",
+                        "CKV_AZURE_23",
+                        "CKV_AZURE_24"
+                    ]
+                }
+            ]
+        },
+        {
+            "file": "/azure/storage.tf",
+            "findings": [
+                {
+                    "resource": "azurerm_managed_disk.example",
+                    "check_ids": [
+                        "CKV_AZURE_2",
+                        "CKV_AZURE_251",
+                        "CKV_AZURE_93"
+                    ]
+                },
+                {
+                    "resource": "azurerm_storage_account.example",
+                    "check_ids": [
+                        "CKV2_AZURE_1",
+                        "CKV2_AZURE_33",
+                        "CKV2_AZURE_38",
+                        "CKV2_AZURE_40",
+                        "CKV2_AZURE_41",
+                        "CKV2_AZURE_47",
+                        "CKV_AZURE_190",
+                        "CKV_AZURE_33",
+                        "CKV_AZURE_44",
+                        "CKV_AZURE_59"
+                    ]
+                },
+                {
+                    "resource": "azurerm_storage_account_network_rules.test",
+                    "check_ids": [
+                        "CKV_AZURE_36"
+                    ]
+                }
+            ]
+        },
+        {
+            "file": "/gcp/big_data.tf",
+            "findings": [
+                {
+                    "resource": "google_bigquery_dataset.dataset",
+                    "check_ids": [
+                        "CKV_GCP_15",
+                        "CKV_GCP_81"
+                    ]
+                },
+                {
+                    "resource": "google_sql_database_instance.master_instance",
+                    "check_ids": [
+                        "CKV2_GCP_13",
+                        "CKV_GCP_108",
+                        "CKV_GCP_109",
+                        "CKV_GCP_11",
+                        "CKV_GCP_110",
+                        "CKV_GCP_111",
+                        "CKV_GCP_14",
+                        "CKV_GCP_51",
+                        "CKV_GCP_52",
+                        "CKV_GCP_53",
+                        "CKV_GCP_54",
+                        "CKV_GCP_6",
+                        "CKV_GCP_60",
+                        "CKV_GCP_79"
+                    ]
+                }
+            ]
+        },
+        {
+            "file": "/gcp/gcs.tf",
+            "findings": [
+                {
+                    "resource": "google_storage_bucket.terragoat_website",
+                    "check_ids": [
+                        "CKV_GCP_114",
+                        "CKV_GCP_29",
+                        "CKV_GCP_62",
+                        "CKV_GCP_78"
+                    ]
+                },
+                {
+                    "resource": "google_storage_bucket_iam_binding.allow_public_read",
+                    "check_ids": [
+                        "CKV_GCP_28"
+                    ]
+                }
+            ]
+        },
+        {
+            "file": "/gcp/gke.tf",
+            "findings": [
+                {
+                    "resource": "google_container_cluster.workload_cluster",
+                    "check_ids": [
+                        "CKV_GCP_1",
+                        "CKV_GCP_12",
+                        "CKV_GCP_13",
+                        "CKV_GCP_18",
+                        "CKV_GCP_21",
+                        "CKV_GCP_23",
+                        "CKV_GCP_25",
+                        "CKV_GCP_61",
+                        "CKV_GCP_64",
+                        "CKV_GCP_65",
+                        "CKV_GCP_66",
+                        "CKV_GCP_69",
+                        "CKV_GCP_7",
+                        "CKV_GCP_70",
+                        "CKV_GCP_8"
+                    ]
+                },
+                {
+                    "resource": "google_container_node_pool.custom_node_pool",
+                    "check_ids": [
+                        "CKV_GCP_10",
+                        "CKV_GCP_68",
+                        "CKV_GCP_69",
+                        "CKV_GCP_9"
+                    ]
+                }
+            ]
+        },
+        {
+            "file": "/gcp/instances.tf",
+            "findings": [
+                {
+                    "resource": "google_compute_disk.unencrypted_disk",
+                    "check_ids": [
+                        "CKV_GCP_37"
+                    ]
+                },
+                {
+                    "resource": "google_compute_instance.server",
+                    "check_ids": [
+                        "CKV_GCP_32",
+                        "CKV_GCP_34",
+                        "CKV_GCP_35",
+                        "CKV_GCP_36",
+                        "CKV_GCP_38",
+                        "CKV_GCP_39",
+                        "CKV_GCP_40"
+                    ]
+                }
+            ]
+        },
+        {
+            "file": "/gcp/networks.tf",
+            "findings": [
+                {
+                    "resource": "google_compute_firewall.allow_all",
+                    "check_ids": [
+                        "CKV_GCP_106",
+                        "CKV_GCP_2",
+                        "CKV_GCP_3",
+                        "CKV_GCP_75",
+                        "CKV_GCP_77",
+                        "CKV_GCP_88"
+                    ]
+                },
+                {
+                    "resource": "google_compute_subnetwork.public-subnetwork",
+                    "check_ids": [
+                        "CKV_GCP_26",
+                        "CKV_GCP_74"
+                    ]
+                }
+            ]
+        },
+        {
+            "file": "/oracle/bucket.tf",
+            "findings": [
+                {
+                    "resource": "oci_objectstorage_bucket.secretsquirrel",
+                    "check_ids": [
+                        "CKV_OCI_10",
+                        "CKV_OCI_7",
+                        "CKV_OCI_8",
+                        "CKV_OCI_9"
+                    ]
+                }
+            ]
+        }
+    ]
+}

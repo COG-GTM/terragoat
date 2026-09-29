@@ -23,6 +23,7 @@ TerraGoat is a learning and training project that demonstrates how common config
   * [AWS](#aws-setup)
   * [Azure](#azure-setup)
   * [GCP](#gcp-setup)
+* [Checkov CI baseline](#checkov-ci-baseline)
 * [Contributing](#contributing)
 * [Support](#support)
 
@@ -248,6 +249,37 @@ We would love to hear about more ideas on how to find vulnerable infrastructure-
 [Bridgecrew](https://bridgecrew.io/?utm_source=github&utm_medium=organic_oss&utm_campaign=terragoat) builds and maintains TerraGoat to encourage the adoption of policy-as-code.
 
 If you need direct support you can contact us at [info@bridgecrew.io](mailto:info@bridgecrew.io).
+
+## Checkov CI baseline
+
+TerraGoat is vulnerable by design, so a plain checkov scan always fails. The [`checkov` workflow](.github/workflows/checkov.yaml) runs on every pull request and push to `master`. It scans `terraform/` against the baseline file [`terraform/.checkov.baseline`](terraform/.checkov.baseline):
+
+* Findings listed in the baseline are the intentional vulnerabilities. They are suppressed and don't fail the build.
+* Any finding that isn't in the baseline fails the job. That covers a new resource, a new file, or a new check ID on an existing resource.
+
+The baseline is a JSON file that checkov generates. It lists failing check IDs by file (relative to `terraform/`) and resource address. Its findings are only comparable with the checkov version pinned in the workflow (`CHECKOV_VERSION`), because newer releases add checks.
+
+### Running the check locally
+
+```bash
+pip install checkov==3.3.19   # same version as CHECKOV_VERSION in .github/workflows/checkov.yaml
+checkov -d terraform --baseline terraform/.checkov.baseline --compact
+```
+
+### Updating the baseline
+
+Update the baseline only when you intentionally add or change a vulnerability, or when you bump the checkov version:
+
+```bash
+pip install checkov==<CHECKOV_VERSION>
+checkov -d terraform --create-baseline --compact --quiet   # rewrites terraform/.checkov.baseline
+git diff terraform/.checkov.baseline                       # review: every added entry should be intentional
+```
+
+* Don't pass `--baseline` together with `--create-baseline`. If you do, the new file will contain only the findings that aren't already in the old baseline, and the intentional vulnerabilities will be lost from it.
+* The command exits non-zero because the scan still has failures. That's expected. Check that the file was rewritten.
+* If you change `CHECKOV_VERSION` in the workflow, regenerate the baseline with the new version in the same PR.
+* Commit the regenerated baseline with the Terraform change that needs it, so reviewers can see which findings are being accepted.
 
 ## Existing vulnerabilities (Auto-Generated)
 ### terraform scan results:
