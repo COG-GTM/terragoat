@@ -1,7 +1,11 @@
 resource "aws_rds_cluster" "app1-rds-cluster" {
-  cluster_identifier      = "app1-rds-cluster"
-  allocated_storage       = 10
-  backup_retention_period = 0
+  cluster_identifier              = "app1-rds-cluster"
+  engine                          = "aurora-mysql"
+  storage_encrypted               = true
+  kms_key_id                      = aws_kms_key.rds_key.arn
+  db_cluster_parameter_group_name = aws_rds_cluster_parameter_group.require_tls.name
+  allocated_storage               = 10
+  backup_retention_period         = 0
   tags = {
     git_commit           = "079fe74f6b96d887c245664fbd8cf676c92f20e5"
     git_file             = "terraform/aws/rds.tf"
@@ -15,9 +19,13 @@ resource "aws_rds_cluster" "app1-rds-cluster" {
 }
 
 resource "aws_rds_cluster" "app2-rds-cluster" {
-  cluster_identifier      = "app2-rds-cluster"
-  allocated_storage       = 10
-  backup_retention_period = 1
+  cluster_identifier              = "app2-rds-cluster"
+  engine                          = "aurora-mysql"
+  storage_encrypted               = true
+  kms_key_id                      = aws_kms_key.rds_key.arn
+  db_cluster_parameter_group_name = aws_rds_cluster_parameter_group.require_tls.name
+  allocated_storage               = 10
+  backup_retention_period         = 1
   tags = {
     git_commit           = "079fe74f6b96d887c245664fbd8cf676c92f20e5"
     git_file             = "terraform/aws/rds.tf"
@@ -31,9 +39,13 @@ resource "aws_rds_cluster" "app2-rds-cluster" {
 }
 
 resource "aws_rds_cluster" "app3-rds-cluster" {
-  cluster_identifier      = "app3-rds-cluster"
-  allocated_storage       = 10
-  backup_retention_period = 15
+  cluster_identifier              = "app3-rds-cluster"
+  engine                          = "aurora-mysql"
+  storage_encrypted               = true
+  kms_key_id                      = aws_kms_key.rds_key.arn
+  db_cluster_parameter_group_name = aws_rds_cluster_parameter_group.require_tls.name
+  allocated_storage               = 10
+  backup_retention_period         = 15
   tags = {
     git_commit           = "079fe74f6b96d887c245664fbd8cf676c92f20e5"
     git_file             = "terraform/aws/rds.tf"
@@ -47,9 +59,13 @@ resource "aws_rds_cluster" "app3-rds-cluster" {
 }
 
 resource "aws_rds_cluster" "app4-rds-cluster" {
-  cluster_identifier      = "app4-rds-cluster"
-  allocated_storage       = 10
-  backup_retention_period = 15
+  cluster_identifier              = "app4-rds-cluster"
+  engine                          = "aurora-mysql"
+  storage_encrypted               = true
+  kms_key_id                      = aws_kms_key.rds_key.arn
+  db_cluster_parameter_group_name = aws_rds_cluster_parameter_group.require_tls.name
+  allocated_storage               = 10
+  backup_retention_period         = 15
   tags = {
     git_commit           = "079fe74f6b96d887c245664fbd8cf676c92f20e5"
     git_file             = "terraform/aws/rds.tf"
@@ -63,9 +79,13 @@ resource "aws_rds_cluster" "app4-rds-cluster" {
 }
 
 resource "aws_rds_cluster" "app5-rds-cluster" {
-  cluster_identifier      = "app5-rds-cluster"
-  allocated_storage       = 10
-  backup_retention_period = 15
+  cluster_identifier              = "app5-rds-cluster"
+  engine                          = "aurora-mysql"
+  storage_encrypted               = true
+  kms_key_id                      = aws_kms_key.rds_key.arn
+  db_cluster_parameter_group_name = aws_rds_cluster_parameter_group.require_tls.name
+  allocated_storage               = 10
+  backup_retention_period         = 15
   tags = {
     git_commit           = "079fe74f6b96d887c245664fbd8cf676c92f20e5"
     git_file             = "terraform/aws/rds.tf"
@@ -79,9 +99,13 @@ resource "aws_rds_cluster" "app5-rds-cluster" {
 }
 
 resource "aws_rds_cluster" "app6-rds-cluster" {
-  cluster_identifier      = "app6-rds-cluster"
-  allocated_storage       = 10
-  backup_retention_period = 15
+  cluster_identifier              = "app6-rds-cluster"
+  engine                          = "aurora-mysql"
+  storage_encrypted               = true
+  kms_key_id                      = aws_kms_key.rds_key.arn
+  db_cluster_parameter_group_name = aws_rds_cluster_parameter_group.require_tls.name
+  allocated_storage               = 10
+  backup_retention_period         = 15
   tags = {
     git_commit           = "079fe74f6b96d887c245664fbd8cf676c92f20e5"
     git_file             = "terraform/aws/rds.tf"
@@ -95,9 +119,13 @@ resource "aws_rds_cluster" "app6-rds-cluster" {
 }
 
 resource "aws_rds_cluster" "app7-rds-cluster" {
-  cluster_identifier      = "app7-rds-cluster"
-  allocated_storage       = 10
-  backup_retention_period = 25
+  cluster_identifier              = "app7-rds-cluster"
+  engine                          = "aurora-mysql"
+  storage_encrypted               = true
+  kms_key_id                      = aws_kms_key.rds_key.arn
+  db_cluster_parameter_group_name = aws_rds_cluster_parameter_group.require_tls.name
+  allocated_storage               = 10
+  backup_retention_period         = 25
   tags = {
     git_commit           = "079fe74f6b96d887c245664fbd8cf676c92f20e5"
     git_file             = "terraform/aws/rds.tf"
@@ -111,9 +139,13 @@ resource "aws_rds_cluster" "app7-rds-cluster" {
 }
 
 resource "aws_rds_cluster" "app8-rds-cluster" {
-  cluster_identifier      = "app8-rds-cluster"
-  allocated_storage       = 10
-  backup_retention_period = 25
+  cluster_identifier              = "app8-rds-cluster"
+  engine                          = "aurora-mysql"
+  storage_encrypted               = true
+  kms_key_id                      = aws_kms_key.rds_key.arn
+  db_cluster_parameter_group_name = aws_rds_cluster_parameter_group.require_tls.name
+  allocated_storage               = 10
+  backup_retention_period         = 25
   tags = {
     git_commit           = "079fe74f6b96d887c245664fbd8cf676c92f20e5"
     git_file             = "terraform/aws/rds.tf"
@@ -128,9 +160,13 @@ resource "aws_rds_cluster" "app8-rds-cluster" {
 }
 
 resource "aws_rds_cluster" "app9-rds-cluster" {
-  cluster_identifier      = "app9-rds-cluster"
-  allocated_storage       = 10
-  backup_retention_period = 25
+  cluster_identifier              = "app9-rds-cluster"
+  engine                          = "aurora-mysql"
+  storage_encrypted               = true
+  kms_key_id                      = aws_kms_key.rds_key.arn
+  db_cluster_parameter_group_name = aws_rds_cluster_parameter_group.require_tls.name
+  allocated_storage               = 10
+  backup_retention_period         = 25
   tags = {
     git_commit           = "079fe74f6b96d887c245664fbd8cf676c92f20e5"
     git_file             = "terraform/aws/rds.tf"
@@ -140,5 +176,39 @@ resource "aws_rds_cluster" "app9-rds-cluster" {
     git_org              = "matansha"
     git_repo             = "terragoat"
     yor_trace            = "a0c98536-c751-4743-92f1-a106ce750249"
+  }
+}
+
+resource "aws_kms_key" "rds_key" {
+  description             = "${local.resource_prefix.value}-rds clusters key"
+  deletion_window_in_days = 7
+  enable_key_rotation     = true
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Sid       = "EnableRootAccountPermissions"
+        Effect    = "Allow"
+        Principal = { AWS = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:root" }
+        Action    = "kms:*"
+        Resource  = "*"
+      }
+    ]
+  })
+}
+
+resource "aws_kms_alias" "rds_key_alias" {
+  name          = "alias/${local.resource_prefix.value}-rds-clusters-key"
+  target_key_id = aws_kms_key.rds_key.key_id
+}
+
+resource "aws_rds_cluster_parameter_group" "require_tls" {
+  name        = "tg-${var.environment}-aurora-mysql8-require-tls"
+  family      = "aurora-mysql8.0"
+  description = "Enforce TLS for client connections"
+
+  parameter {
+    name  = "require_secure_transport"
+    value = "ON"
   }
 }
