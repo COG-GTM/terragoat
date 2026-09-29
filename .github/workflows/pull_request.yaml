@@ -14,3 +14,18 @@ jobs:
         uses: bridgecrewio/checkov-action@master
         with:
           directory: terraform/
+
+  tfsec-job:
+    runs-on: ubuntu-latest
+    name: tfsec-action
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+
+      - name: Run tfsec action
+        # v1.0.3
+        uses: aquasecurity/tfsec-action@b466648d6e39e7c75324f25d83891162a721f2d6
+        with:
+          working_directory: terraform/
+          version: v1.28.14
+          soft_fail: true
